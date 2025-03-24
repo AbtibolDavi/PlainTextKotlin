@@ -45,6 +45,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +53,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -59,6 +61,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.plaintextkotlin.R
@@ -66,25 +69,23 @@ import com.example.plaintextkotlin.data.Datasource
 import com.example.plaintextkotlin.model.Password
 import com.example.plaintextkotlin.navigation.Routes
 import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
+import com.example.plaintextkotlin.ui.viewmodel.PasswordPageViewModel
+import com.example.plaintextkotlin.ui.viewmodel.PasswordPageViewModelFactory
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasswordPage(navController: NavController, username: String? = null) {
+fun PasswordPage(navController: NavController,
+                 username: String? = null,
+                 viewModel: PasswordPageViewModel = viewModel(
+                     factory = PasswordPageViewModelFactory(context = LocalContext.current)
+                 )
+) {
+    Log.d("PasswordPage", "Composable PasswordPage iniciada")
     var searchText by remember { mutableStateOf("") }
-    val passwordList = remember { Datasource().loadPasswords() }
-    val filteredPasswords = if (searchText.isBlank()) {
-        passwordList
-    } else {
-        passwordList.filter { password ->
-            stringResource(password.titleResourceId).contains(searchText, ignoreCase = true) ||
-                    stringResource(password.usernameResourceId).contains(
-                        searchText,
-                        ignoreCase = true
-                    )
-        }
-    }
-
+//    val passwordList = remember { Datasource().loadPasswords() }
+    val passwordsState = viewModel.passwords.collectAsState()
+    Log.d("PasswordPage", "Estado passwordsState coletado, tamanho da lista: ${passwordsState.value.size}")
     var showWelcomeAppBar by remember { mutableStateOf(true) }
 
     LaunchedEffect(key1 = Unit) {
@@ -106,7 +107,7 @@ fun PasswordPage(navController: NavController, username: String? = null) {
             ) { isWelcomeAppBarVisible ->
                 if (isWelcomeAppBarVisible) {
                     CenterAlignedTopAppBar(
-                        title = { Text("Bem-vindo, ${username ?: "usuário"}") }
+                        title = { Text("Bem-vindo, ${if (username.isNullOrEmpty()) "usuário" else username}") }
                     )
                 } else {
                     CenterAlignedTopAppBar(
@@ -131,19 +132,26 @@ fun PasswordPage(navController: NavController, username: String? = null) {
         ) {
             SearchBar(
                 searchText = searchText,
-                onSearchTextChanged = { newSearchText -> searchText = newSearchText }
+                onSearchTextChanged = { newSearchText ->
+                    searchText = newSearchText
+                    viewModel.searchPasswords(newSearchText) }
             )
             Spacer(modifier = Modifier.height(16.dp))
-            if (filteredPasswords.isEmpty()) {
+            Log.d("PasswordPage", "Antes de verificar se a lista está vazia e chamar PasswordList/EmptyStateMessage")
+            if (passwordsState.value.isEmpty()) {
                 EmptyStateMessage()
+                Log.d("PasswordPage", "Lista de senhas vazia, EmptyStateMessage exibida")
             } else {
+                Log.d("PasswordPage", "Lista de senhas NÃO vazia, PasswordList será exibida, tamanho da lista: ${passwordsState.value.size}")
                 PasswordList(
-                    passwordList = filteredPasswords,
+                    passwordList = passwordsState.value,
                     navController = navController
                 )
+                Log.d("PasswordPage", "PasswordList exibida")
             }
         }
     }
+    Log.d("PasswordPage", "Fim do Composable PasswordPage")
 }
 
 @Composable

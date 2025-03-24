@@ -55,17 +55,22 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.plaintextkotlin.R
 import com.example.plaintextkotlin.navigation.Routes
 import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
+import com.example.plaintextkotlin.ui.viewmodel.LoginPageViewModel
+import com.example.plaintextkotlin.ui.viewmodel.LoginPageViewModelFactory
 import kotlinx.coroutines.delay
 
 @Composable
-fun LoginPage(navController: NavController) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+fun LoginPage(navController: NavController,
+              viewModel: LoginPageViewModel = viewModel(factory = LoginPageViewModelFactory(context = LocalContext.current))
+) {
+//    var username by remember { mutableStateOf("") }
+//    var password by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
     var showPassword by remember { mutableStateOf(false) }
     var showImage by remember { mutableStateOf(false) }
@@ -93,9 +98,10 @@ fun LoginPage(navController: NavController) {
         showImage = true
     }
 
-    LaunchedEffect(username, password) {
-        loginEnabled = username.isNotBlank() && password.isNotBlank()
-    }
+//    LaunchedEffect( /**/) {
+//        loginEnabled = true
+//    }
+    loginEnabled = true
 
     Box(
         modifier = Modifier
@@ -165,32 +171,44 @@ fun LoginPage(navController: NavController) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            OutlinedTextField(value = username, onValueChange = { username = it }, label = {
-                Text(
-                    stringResource(R.string.username_label),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }, modifier = Modifier.fillMaxWidth()
-                .onFocusChanged { focusState -> usernameFocused = focusState.isFocused }, singleLine = true, leadingIcon = {
-                Icon(
-                    imageVector = Icons.Filled.Person,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }, colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant
-            ),
-                isError = username.isEmpty() && usernameFocused,
-                supportingText = { if (username.isEmpty()) Text(stringResource(R.string.required_field)) }
+            var usernameInput by remember { mutableStateOf("") }
+            OutlinedTextField(
+                value = usernameInput,
+                onValueChange = { usernameInput = it },
+                label = {
+                    Text(
+                        stringResource(R.string.username_label),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged { focusState -> usernameFocused = focusState.isFocused },
+                singleLine = true,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Person,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant
+                ),
+                isError = usernameInput.isEmpty() && usernameFocused,
+                supportingText = { if (usernameInput.isEmpty()) Text(stringResource(R.string.required_field))
+                }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(value = password,
-                onValueChange = { password = it },
+            var passwordInput by remember { mutableStateOf("") }
+            OutlinedTextField(
+                value = passwordInput,
+                onValueChange = { passwordInput = it },
                 label = {
                     Text(
                         stringResource(R.string.password_label),
@@ -203,7 +221,8 @@ fun LoginPage(navController: NavController) {
                     PasswordVisualTransformation()
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .onFocusChanged { focusState -> passwordFocused = focusState.isFocused },
                 singleLine = true,
                 leadingIcon = {
@@ -238,9 +257,9 @@ fun LoginPage(navController: NavController) {
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
-                isError = password.isEmpty() && passwordFocused,
-                supportingText = { if (password.isEmpty()) Text(stringResource(R.string.required_field))
-                                 },
+                isError = passwordInput.isEmpty() && passwordFocused,
+                supportingText = { if (passwordInput.isEmpty()) Text(stringResource(R.string.required_field))
+                }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -267,9 +286,10 @@ fun LoginPage(navController: NavController) {
             Button(
                 enabled = loginEnabled,
                 onClick = {
-                    // TODO: Implement login logic
-                    navController.navigate(Routes.PASSWORD_PAGE.replace("{username}", username))
-                    Toast.makeText(context, context.getString(R.string.login_success), Toast.LENGTH_SHORT).show()
+                    viewModel.onLoginButtonClicked(usernameInput) { username ->
+                        navController.navigate(Routes.PASSWORD_PAGE.replace("{username}", username))
+                        Toast.makeText(context, context.getString(R.string.login_success), Toast.LENGTH_SHORT).show()
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 modifier = Modifier
