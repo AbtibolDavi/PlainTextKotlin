@@ -10,6 +10,7 @@ class LoginPageViewModelFactory(context: Context) : ViewModelProvider.Factory {
 
     private val passwordRepository: PasswordRepository = DefaultPasswordRepository(context)
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(LoginPageViewModel::class.java)) {
             return LoginPageViewModel(passwordRepository) as T

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AddPasswordPageViewModel(
-    private val passwordRepository: PasswordRepository // Também não usado diretamente agora, mas para consistência
+    private val passwordRepository: PasswordRepository
 ) : ViewModel() {
 
     private val _isPasswordSaved = MutableStateFlow(false)
@@ -22,7 +22,7 @@ class AddPasswordPageViewModel(
         title: String,
         username: String,
         password: String,
-        onPasswordSaved: () -> Unit // Lambda para notificar a UI que a senha foi salva
+        onPasswordSaved: () -> Unit
     ) {
         viewModelScope.launch {
             // TODO: Implementar a lógica para salvar a senha no repositório de dados.
@@ -30,10 +30,10 @@ class AddPasswordPageViewModel(
             if (title.isNotBlank() && username.isNotBlank() && password.isNotBlank()) {
                 // Simulação de salvamento bem-sucedido
                 _isPasswordSaved.value = true
-                onPasswordSaved() // Notifica a UI que a senha foi salva
+                onPasswordSaved()
             } else {
                 // Simulação de falha no salvamento (campos inválidos)
-                _isFormValid.value = false // Ou você pode ter um StateFlow de erro mais específico
+                _isFormValid.value = false
             }
         }
     }

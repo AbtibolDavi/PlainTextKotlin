@@ -31,23 +31,10 @@ class PasswordPageViewModel(
         }
     }
 
-//    val filteredPasswords = if (searchText.isBlank()) {
-//        passwordList
-//    } else {
-//        passwordList.filter { password ->
-//            stringResource(password.titleResourceId).contains(searchText, ignoreCase = true) ||
-//                    stringResource(password.usernameResourceId).contains(
-//                        searchText,
-//                        ignoreCase = true
-//                    )
-//        }
-//    }
-
     fun searchPasswords(query: String) {
         viewModelScope.launch {
             Log.d("PasswordPageViewModel", "Iniciando searchPasswords(), query: $query")
-            // Removido: Lógica de filtragem daqui
-            _passwords.value = passwordRepository.searchPasswords(query) // *** Usando repository.searchPasswords ***
+            _passwords.value = passwordRepository.searchPasswords(query)
             Log.d("PasswordPageViewModel", "Query não vazia, exibindo senhas filtradas, tamanho da lista: ${_passwords.value.size}")
             Log.d("PasswordPageViewModel", "Finalizando searchPasswords(), query: $query")
         }

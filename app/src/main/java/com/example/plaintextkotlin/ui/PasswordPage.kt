@@ -83,7 +83,6 @@ fun PasswordPage(navController: NavController,
 ) {
     Log.d("PasswordPage", "Composable PasswordPage iniciada")
     var searchText by remember { mutableStateOf("") }
-//    val passwordList = remember { Datasource().loadPasswords() }
     val passwordsState = viewModel.passwords.collectAsState()
     Log.d("PasswordPage", "Estado passwordsState coletado, tamanho da lista: ${passwordsState.value.size}")
     var showWelcomeAppBar by remember { mutableStateOf(true) }

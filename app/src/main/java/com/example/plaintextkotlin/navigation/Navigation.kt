@@ -38,11 +38,11 @@ fun Navigation() {
         }
         composable(
             Routes.PASSWORD_DETAILS,
-            arguments = listOf(navArgument("passwordId") { type = NavType.StringType })
-            ) { entry ->
-                val passwordId = entry.arguments?.getString("passwordId")
-                Log.d("Navigation", "PasswordId recebido como argumento: $passwordId")
-                PasswordDetailPage(navController = navController, passwordId = passwordId)
+            arguments = listOf(navArgument("passwordId") { type = NavType.IntType })
+        ) { entry ->
+            val passwordId = entry.arguments?.getInt("passwordId") ?: -1
+            Log.d("Navigation", "PasswordId recebido como argumento: $passwordId")
+            PasswordDetailPage(navController = navController, passwordId = passwordId)
         }
     }
 }

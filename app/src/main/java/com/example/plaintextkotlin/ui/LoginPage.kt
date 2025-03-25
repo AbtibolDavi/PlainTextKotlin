@@ -38,6 +38,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -72,8 +73,8 @@ fun LoginPage(navController: NavController,
     var rememberMe by remember { mutableStateOf(false) }
     var showPassword by remember { mutableStateOf(false) }
     var showImage by remember { mutableStateOf(false) }
-    var animatedSloganTextCount by remember { mutableStateOf(0) }
-    var animatedAuthorTextCount by remember { mutableStateOf(0) }
+    var animatedSloganTextCount by remember { mutableIntStateOf(0) }
+    var animatedAuthorTextCount by remember { mutableIntStateOf(0) }
     val sloganText = stringResource(R.string.slogan_text)
     val authorText = stringResource(R.string.slogan_author)
     var showAuthorText by remember { mutableStateOf(false) }

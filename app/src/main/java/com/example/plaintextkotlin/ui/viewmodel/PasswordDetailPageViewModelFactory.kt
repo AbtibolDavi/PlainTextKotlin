@@ -1,29 +1,21 @@
 package com.example.plaintextkotlin.ui.viewmodel
 
 import android.content.Context
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.savedstate.SavedStateRegistryOwner
+import androidx.lifecycle.ViewModelProvider
 import com.example.plaintextkotlin.data.repository.DefaultPasswordRepository
 import com.example.plaintextkotlin.data.repository.PasswordRepository
 
 class PasswordDetailPageViewModelFactory(
-//    private val passwordId: String,
-    context: Context,
-    owner: SavedStateRegistryOwner
-) : AbstractSavedStateViewModelFactory(owner, null) { // Changed to AbstractSavedStateViewModelFactory and added owner parameter
+    context: Context
+) : ViewModelProvider.Factory {
 
     private val passwordRepository: PasswordRepository = DefaultPasswordRepository(context)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(
-        key: String,
-        modelClass: Class<T>,
-        savedStateHandle: SavedStateHandle
-    ): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PasswordDetailPageViewModel::class.java)) {
-            return PasswordDetailPageViewModel(passwordRepository, savedStateHandle) as T // Pass savedStateHandle here
+            return PasswordDetailPageViewModel(passwordRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
