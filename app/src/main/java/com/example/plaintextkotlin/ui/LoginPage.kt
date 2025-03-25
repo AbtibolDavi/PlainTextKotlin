@@ -69,8 +69,6 @@ import kotlinx.coroutines.delay
 fun LoginPage(navController: NavController,
               viewModel: LoginPageViewModel = viewModel(factory = LoginPageViewModelFactory(context = LocalContext.current))
 ) {
-//    var username by remember { mutableStateOf("") }
-//    var password by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
     var showPassword by remember { mutableStateOf(false) }
     var showImage by remember { mutableStateOf(false) }
@@ -98,9 +96,6 @@ fun LoginPage(navController: NavController,
         showImage = true
     }
 
-//    LaunchedEffect( /**/) {
-//        loginEnabled = true
-//    }
     loginEnabled = true
 
     Box(

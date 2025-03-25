@@ -24,6 +24,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,23 +38,36 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.plaintextkotlin.R
 import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
+import com.example.plaintextkotlin.ui.viewmodel.AddPasswordPageViewModel
+import com.example.plaintextkotlin.ui.viewmodel.AddPasswordPageViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddPasswordPage(navController: NavController) {
-    var title by remember { mutableStateOf("") }
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
+fun AddPasswordPage(navController: NavController,
+                    viewModel: AddPasswordPageViewModel = viewModel(factory = AddPasswordPageViewModelFactory(context = LocalContext.current))
+) {
     var titleFocused by remember { mutableStateOf(false) }
     var usernameFocused by remember { mutableStateOf(false) }
     var passwordFocused by remember { mutableStateOf(false) }
+    var titleInput by remember { mutableStateOf("") }
+    var usernameInput by remember { mutableStateOf("") }
+    var passwordInput by remember { mutableStateOf("") }
 
     val context = LocalContext.current
+    val isPasswordSavedState = viewModel.isPasswordSaved.collectAsState()
+
+    LaunchedEffect(isPasswordSavedState.value) {
+        if (isPasswordSavedState.value) {
+            Toast.makeText(context, context.getString(R.string.password_saved_success), Toast.LENGTH_SHORT).show()
+            viewModel.resetIsPasswordSaved()
+            navController.popBackStack()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -78,16 +93,17 @@ fun AddPasswordPage(navController: NavController) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             OutlinedTextField(
-                value = title,
-                onValueChange = { title = it },
+                value = titleInput,
+                onValueChange = { titleInput = it },
                 label = {
                     Text(stringResource(R.string.website_label))
                 },
                 placeholder = { Text(stringResource(R.string.website_placeholder))},
-                isError = title.isEmpty() && titleFocused,
+                isError = titleInput.isEmpty() && titleFocused,
                 supportingText = {
-                    if (title.isEmpty()) Text(stringResource(R.string.required_field))
+                    if (titleInput.isEmpty()) Text(stringResource(R.string.required_field))
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -103,15 +119,18 @@ fun AddPasswordPage(navController: NavController) {
             )
             Spacer(modifier = Modifier.height(16.dp))
 
+
             OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
+                value = usernameInput,
+                onValueChange = { usernameInput = it },
                 label = {
                     Text(stringResource(R.string.username_label))
                 },
                 placeholder = { Text(stringResource(R.string.username_placeholder))},
-                isError = username.isEmpty() && usernameFocused,
-                supportingText = { if (username.isEmpty()) Text(stringResource(R.string.required_field)) },
+                isError = usernameInput.isEmpty() && usernameFocused,
+                supportingText = {
+                    if (usernameInput.isEmpty()) Text(stringResource(R.string.required_field))
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .onFocusChanged { focusState -> usernameFocused = focusState.isFocused },
@@ -123,16 +142,17 @@ fun AddPasswordPage(navController: NavController) {
                 )
             )
             Spacer(modifier = Modifier.height(16.dp))
+
             OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
+                value = passwordInput,
+                onValueChange = { passwordInput = it },
                 label = {
                     Text(stringResource(R.string.password_label))
                 },
                 placeholder = { Text(stringResource(R.string.password_placeholder))},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                isError = password.isEmpty() && passwordFocused,
-                supportingText = { if (password.isEmpty()) Text(stringResource(R.string.required_field)) },
+                isError = passwordInput.isEmpty() && passwordFocused,
+                supportingText = { if (passwordInput.isEmpty()) Text(stringResource(R.string.required_field)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .onFocusChanged { focusState -> passwordFocused = focusState.isFocused },
@@ -147,16 +167,12 @@ fun AddPasswordPage(navController: NavController) {
 
             Button(
                 onClick = {
-                    // TODO: Save password logic here
-                    if (title.isNotEmpty() && username.isNotEmpty() && password.isNotEmpty()) {
-                        Toast.makeText(context,
-                            context.getString(R.string.password_saved_success), Toast.LENGTH_SHORT).show()
-                            navController.popBackStack()
-                    } else {
-                        Toast.makeText(context,
-                            context.getString(R.string.fill_required_fields), Toast.LENGTH_SHORT).show()
-                    }
-
+                    viewModel.onSavePasswordClicked (
+                        title = titleInput,
+                        username = usernameInput,
+                        password = passwordInput,
+                        onPasswordSaved = {}
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth()

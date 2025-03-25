@@ -31,6 +31,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSavedStateRegistryOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -48,15 +50,32 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.plaintextkotlin.R
-import com.example.plaintextkotlin.model.Password
 import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
+import com.example.plaintextkotlin.ui.viewmodel.PasswordDetailPageViewModel
+import com.example.plaintextkotlin.ui.viewmodel.PasswordDetailPageViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasswordDetailPage(navController: NavController, password: Password?) {
+fun PasswordDetailPage(navController: NavController,
+                       passwordId: String?,
+                       viewModel: PasswordDetailPageViewModel = viewModel(
+                           factory = PasswordDetailPageViewModelFactory(
+//                               passwordId = passwordId ?: "-1",
+                               context = LocalContext.current,
+                               owner = LocalSavedStateRegistryOwner.current
+                           )
+                       )
+) {
+    Log.d(
+        "PasswordDetailPage",
+        "PasswordId recebido no Composable: $passwordId"
+    )
+    val passwordState = viewModel.password.collectAsState()
+    val password = passwordState.value
     Log.d("PasswordDetailPage", "Password recebida: ${password?.let { stringResource(it.titleResourceId) } ?: "null"}")
     if (password == null) {
         Log.d("PasswordDetailPage", "Password é nula, voltando para tela anterior")
@@ -194,11 +213,7 @@ fun PasswordDetailPagePreview() {
     PlainTextKotlinTheme {
         PasswordDetailPage(
             navController = rememberNavController(),
-            password = Password(
-                titleResourceId = R.string.password_title_1,
-                usernameResourceId = R.string.password_username_1,
-                contentResourceId = R.string.password_content_1
-            )
+            passwordId = stringResource(R.string.password_title_1)
         )
     }
 }

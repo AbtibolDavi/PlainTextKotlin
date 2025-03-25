@@ -2,13 +2,11 @@ package com.example.plaintextkotlin.navigation
 
 import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.plaintextkotlin.data.Datasource
 import com.example.plaintextkotlin.ui.AddPasswordPage
 import com.example.plaintextkotlin.ui.LoginPage
 import com.example.plaintextkotlin.ui.PasswordDetailPage
@@ -40,14 +38,11 @@ fun Navigation() {
         }
         composable(
             Routes.PASSWORD_DETAILS,
-            arguments = listOf(navArgument("passwordId") { type = NavType.IntType })
+            arguments = listOf(navArgument("passwordId") { type = NavType.StringType })
             ) { entry ->
-            val passwordId = entry.arguments?.getInt("passwordId")
-            Log.d("Navigation", "PasswordId recebido como argumento: $passwordId")
-            val passwords = Datasource().loadPasswords()
-            val password = passwords.find { it.titleResourceId == passwordId }
-            Log.d("Navigation", "Senha encontrada para o ID: ${password?.let { stringResource(it.titleResourceId) } ?: "null"}")
-            PasswordDetailPage(navController = navController, password = password)
+                val passwordId = entry.arguments?.getString("passwordId")
+                Log.d("Navigation", "PasswordId recebido como argumento: $passwordId")
+                PasswordDetailPage(navController = navController, passwordId = passwordId)
         }
     }
 }
