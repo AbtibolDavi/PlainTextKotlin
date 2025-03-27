@@ -129,7 +129,7 @@ fun AddPasswordPage(navController: NavController,
                 value = usernameInput,
                 onValueChange = { usernameInput = it },
                 label = {
-                    Text(stringResource(R.string.username_label))
+                    Text(stringResource(R.string.username_label_required))
                 },
                 placeholder = { Text(stringResource(R.string.username_placeholder))},
                 isError = usernameInput.isEmpty() && usernameFocused,
@@ -152,7 +152,7 @@ fun AddPasswordPage(navController: NavController,
                 value = passwordInput,
                 onValueChange = { passwordInput = it },
                 label = {
-                    Text(stringResource(R.string.password_label))
+                    Text(stringResource(R.string.password_label_required))
                 },
                 placeholder = { Text(stringResource(R.string.password_placeholder))},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),

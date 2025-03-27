@@ -2,6 +2,7 @@ package com.example.plaintextkotlin.navigation
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,18 +12,19 @@ import com.example.plaintextkotlin.ui.AddPasswordPage
 import com.example.plaintextkotlin.ui.LoginPage
 import com.example.plaintextkotlin.ui.PasswordDetailPage
 import com.example.plaintextkotlin.ui.PasswordPage
+import com.example.plaintextkotlin.ui.SettingsScreen
 
 object Routes {
     const val LOGIN = "login"
     const val PASSWORD_PAGE = "password_page/{username}"
     const val ADD_PASSWORD = "add_password"
     const val PASSWORD_DETAILS = "password_details/{passwordId}"
+    const val SETTINGS = "settings"
 }
 
 @Composable
-fun Navigation() {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Routes.LOGIN) {
+fun Navigation(navController: NavHostController = rememberNavController(), startDestination: String) {
+    NavHost(navController = navController, startDestination = startDestination) {
         composable(Routes.LOGIN) {
             LoginPage(navController)
         }
@@ -30,7 +32,7 @@ fun Navigation() {
             route = Routes.PASSWORD_PAGE,
             arguments = listOf(navArgument("username") { type = NavType.StringType })
         )   { backStackEntry ->
-            val username = backStackEntry.arguments?.getString("username")
+            val username = backStackEntry.arguments?.getString("username") ?: "Usuário"
             PasswordPage(navController = navController, username = username)
         }
         composable(Routes.ADD_PASSWORD) {
@@ -43,6 +45,9 @@ fun Navigation() {
             val passwordId = entry.arguments?.getInt("passwordId") ?: -1
             Log.d("Navigation", "PasswordId recebido como argumento: $passwordId")
             PasswordDetailPage(navController = navController, passwordId = passwordId)
+        }
+        composable(Routes.SETTINGS) {
+            SettingsScreen(navController = navController)
         }
     }
 }

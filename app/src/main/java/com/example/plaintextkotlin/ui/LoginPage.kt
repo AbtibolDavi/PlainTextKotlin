@@ -92,6 +92,9 @@ fun LoginPage(navController: NavController,
 
     val loginError by viewModel.loginError.collectAsState()
 
+    val initialRememberMe by viewModel.initialRememberMeState.collectAsState()
+    val initialUsername by viewModel.initialUsername.collectAsState()
+
     LaunchedEffect(key1 = true) {
         for (i in sloganText.indices) {
             animatedSloganTextCount = i + 1
@@ -103,6 +106,13 @@ fun LoginPage(navController: NavController,
             delay(50)
         }
         showImage = true
+    }
+
+    LaunchedEffect(initialRememberMe, initialUsername) {
+        rememberMe = initialRememberMe
+        if (initialUsername.isNotEmpty()) {
+            usernameInput = initialUsername
+        }
     }
 
     val isLoginButtonEnabled = usernameInput.isNotBlank() && passwordInput.isNotBlank()
@@ -183,7 +193,7 @@ fun LoginPage(navController: NavController,
                                 },
                 label = {
                     Text(
-                        stringResource(R.string.username_label),
+                        stringResource(R.string.username_label_required),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
@@ -219,7 +229,7 @@ fun LoginPage(navController: NavController,
                                 },
                 label = {
                     Text(
-                        stringResource(R.string.password_label),
+                        stringResource(R.string.password_label_required),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
@@ -303,12 +313,17 @@ fun LoginPage(navController: NavController,
             Button(
                 enabled = isLoginButtonEnabled,
                 onClick = {
-                    viewModel.onLoginButtonClicked(usernameInput, passwordInput) { username ->
-                        navController.navigate(Routes.PASSWORD_PAGE.replace("{username}", username)) {
-                            popUpTo(Routes.LOGIN) { inclusive = true }
+                    viewModel.onLoginButtonClicked(
+                        usernameInput = usernameInput,
+                        passwordInput = passwordInput,
+                        rememberMeChecked = rememberMe,
+                        navigateToPasswordPage = { username ->
+                            navController.navigate(Routes.PASSWORD_PAGE.replace("{username}", username)) {
+                                popUpTo(Routes.LOGIN) { inclusive = true }
+                            }
+                            Toast.makeText(context, context.getString(R.string.login_success), Toast.LENGTH_SHORT).show()
                         }
-                        Toast.makeText(context, context.getString(R.string.login_success), Toast.LENGTH_SHORT).show()
-                    }
+                    )
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 modifier = Modifier

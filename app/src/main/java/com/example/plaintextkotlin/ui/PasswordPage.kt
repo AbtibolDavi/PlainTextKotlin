@@ -33,10 +33,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -111,7 +113,15 @@ fun PasswordPage(navController: NavController,
                     )
                 } else {
                     CenterAlignedTopAppBar(
-                        title = { Text(stringResource(R.string.password_page_title)) }
+                        title = { Text(stringResource(R.string.password_page_title)) },
+                        actions = {
+                            IconButton(onClick = { navController.navigate(Routes.SETTINGS)}) {
+                                Icon(
+                                    imageVector = Icons.Filled.Settings,
+                                    contentDescription = "Configurações"
+                                )
+                            }
+                        }
                     )
                 }
             }
@@ -169,8 +179,8 @@ fun SearchBar(searchText: String, onSearchTextChanged: (String) -> Unit) {
         },
         shape = RoundedCornerShape(24.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.surface,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             focusedBorderColor = MaterialTheme.colorScheme.primary,
             unfocusedBorderColor = MaterialTheme.colorScheme.surface
         )

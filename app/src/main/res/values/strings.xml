@@ -6,8 +6,10 @@
     <string name="slogan_author">Bob and Alice</string>
     <string name="login_message">Digite suas credenciais para continuar</string>
     <string name="remember_me_check">Salvar informação de login</string>
-    <string name="password_label">Senha:</string>
-    <string name="username_label">Login:</string>
+    <string name="password_label">Senha: </string>
+    <string name="username_label">Login: </string>
+    <string name="password_label_required">Senha*</string>
+    <string name="username_label_required">Login*</string>
     <string name="login_button_text">ENTRAR</string>
     <string name="hide_password">Esconder senha</string>
     <string name="show_password">Mostrar senha</string>
@@ -19,7 +21,7 @@
     <string name="save_password">Salvar senha</string>
     <string name="new_password_title">Nova senha</string>
     <string name="password_detail_title">Detalhes da senha</string>
-    <string name="website_label">Nome do site/aplicativo: </string>
+    <string name="website_label">Nome do site/aplicativo*</string>
     <string name="copy_login">Copiar login</string>
     <string name="back">Voltar</string>
     <string name="edit">Editar</string>
@@ -32,7 +34,7 @@
     <string name="password_saved_success">Senha salva com sucesso!</string>
     <string name="password_saved_error">Erro ao salvar senha</string>
     <string name="fill_required_fields">Preencha todos os campos obrigatórios</string>
-    <string name="required_field">Campo obrigatório</string>
+    <string name="required_field">*obrigatório</string>
     <string name="login_success">Login efetuado com sucesso!</string>
     <string name="login_copied">Login copiado</string>
     <string name="password_copied">Senha copiada</string>
@@ -41,7 +43,10 @@
     <string name="username_placeholder">Seu login de usuário</string>
     <string name="password_placeholder">Sua senha secreta</string>
     <string name="error_loading_details">Erro ao carregar detalhes</string>
-    <string name="successful_deleted_pwd">Senha excluída!</string>
+    <string name="successful_deleted_pwd">Senha excluída!</string>d
     <string name="delete_alert_dialog">Confirmar exclusão</string>
     <string name="delete_alert_dialog_text">Tem certeza que deseja excluir esta senha? Esta ação não pode ser desfeita.</string>
+    <string name="clean_search">Limpar pesquisa</string>
+    <string name="password_not_found">Nenhum resultado para %1$s</string>
+    <string name="try_another_search">Tente um termo de busca diferente</string>
 </resources>

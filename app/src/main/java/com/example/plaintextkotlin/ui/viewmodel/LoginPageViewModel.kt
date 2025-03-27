@@ -1,34 +1,49 @@
 package com.example.plaintextkotlin.ui.viewmodel
 
-import android.R
-import android.R.attr.password
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.plaintextkotlin.data.repository.PasswordRepository
+import com.example.plaintextkotlin.utils.PreferenceManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class LoginPageViewModel(
-    private val passwordRepository: PasswordRepository // Por enquanto, não vamos usar, mas manter para consistência
+    private val preferenceManager: PreferenceManager
 ) : ViewModel() {
-    private val MASTER_USER = "admin"
-    private val MASTER_PASS = "password"
 
     private val _loginError = MutableStateFlow<String?>(null)
     val loginError: StateFlow<String?> = _loginError.asStateFlow()
 
+    private val _initialRememberMeState = MutableStateFlow(false)
+    val initialRememberMeState : StateFlow<Boolean> = _initialRememberMeState.asStateFlow()
+
+    private val _initialUsername = MutableStateFlow("")
+    val initialUsername : StateFlow<String> = _initialUsername.asStateFlow()
+
+    init {
+        _initialRememberMeState.value = preferenceManager.getRememberMeState()
+        _initialUsername.value = preferenceManager.getRememberMeUsername() ?: ""
+    }
 
     fun onLoginButtonClicked(usernameInput: String,
                              passwordInput: String,
+                             rememberMeChecked: Boolean,
                              navigateToPasswordPage: (String) -> Unit) {
         viewModelScope.launch {
+            val storedUsername = preferenceManager.getAppUsername() ?: PreferenceManager.DEFAULT_APP_USERNAME
+            val storedPassword = preferenceManager.getAppPassword() ?: PreferenceManager.DEFAULT_APP_PASSWORD
+
             if (usernameInput.isBlank() || passwordInput.isBlank()) {
                 _loginError.value = "Usuário e senha são obrigatórios."
-            } else if (usernameInput == MASTER_USER && passwordInput == MASTER_PASS) {
+            } else if (usernameInput == storedUsername && passwordInput == storedPassword) {
                 _loginError.value = null
+                preferenceManager.saveRememberMeState(rememberMeChecked)
+                if (rememberMeChecked) {
+                    preferenceManager.saveRememberMeCredentials(usernameInput, passwordInput)
+                } else {
+                    preferenceManager.clearRememberMeCredentials()
+                }
                 navigateToPasswordPage(usernameInput)
             } else {
                 _loginError.value = "Usuário ou senha incorretos."

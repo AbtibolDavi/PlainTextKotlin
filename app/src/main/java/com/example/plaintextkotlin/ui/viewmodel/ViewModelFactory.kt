@@ -6,24 +6,38 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.plaintextkotlin.data.AppDatabase
 import com.example.plaintextkotlin.data.repository.PasswordRepository
 import com.example.plaintextkotlin.data.repository.DefaultPasswordRepository
+import com.example.plaintextkotlin.utils.PreferenceManager
 
-class ViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
+class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
 
     private val passwordDao = AppDatabase.getDatabase(context).passwordDao()
     private val passwordRepository: PasswordRepository = DefaultPasswordRepository(passwordDao)
 
+    private val preferenceManager: PreferenceManager = PreferenceManager(context.applicationContext)
+
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(PasswordPageViewModel::class.java)) {
-            return PasswordPageViewModel(passwordRepository) as T
-        } else if (modelClass.isAssignableFrom(AddPasswordPageViewModel::class.java)) {
-            return AddPasswordPageViewModel(passwordRepository) as T
-        } else if (modelClass.isAssignableFrom(LoginPageViewModel::class.java)) {
-            return LoginPageViewModel(passwordRepository) as T
-        } else if (modelClass.isAssignableFrom(PasswordDetailPageViewModel::class.java)) {
-            return PasswordDetailPageViewModel(passwordRepository) as T
+        return when {
+            modelClass.isAssignableFrom(PasswordPageViewModel::class.java) -> {
+                PasswordPageViewModel(passwordRepository) as T
+            }
+            modelClass.isAssignableFrom(AddPasswordPageViewModel::class.java) -> {
+                AddPasswordPageViewModel(passwordRepository) as T
+            }
+            modelClass.isAssignableFrom(LoginPageViewModel::class.java) -> {
+                LoginPageViewModel(preferenceManager) as T
+            }
+            modelClass.isAssignableFrom(PasswordDetailPageViewModel::class.java) -> {
+                PasswordDetailPageViewModel(passwordRepository) as T
+            }
+            modelClass.isAssignableFrom(SplashViewModel::class.java) -> {
+                SplashViewModel(preferenceManager) as T
+            }
+            modelClass.isAssignableFrom(SettingsViewModel::class.java) -> {
+                SettingsViewModel(preferenceManager) as T
+            }
+            else -> throw IllegalArgumentException("Classe ViewModel desconhecida. ${modelClass.name}")
         }
-        throw IllegalArgumentException("Classe ViewModel desconhecida")
     }
 }
