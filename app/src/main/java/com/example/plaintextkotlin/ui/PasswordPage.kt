@@ -65,12 +65,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.plaintextkotlin.R
-import com.example.plaintextkotlin.data.Datasource
 import com.example.plaintextkotlin.model.Password
 import com.example.plaintextkotlin.navigation.Routes
 import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
 import com.example.plaintextkotlin.ui.viewmodel.PasswordPageViewModel
-import com.example.plaintextkotlin.ui.viewmodel.PasswordPageViewModelFactory
+import com.example.plaintextkotlin.ui.viewmodel.ViewModelFactory
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,7 +77,9 @@ import kotlinx.coroutines.delay
 fun PasswordPage(navController: NavController,
                  username: String? = null,
                  viewModel: PasswordPageViewModel = viewModel(
-                     factory = PasswordPageViewModelFactory(context = LocalContext.current)
+                     factory = ViewModelFactory(
+                         context = LocalContext.current
+                     )
                  )
 ) {
     Log.d("PasswordPage", "Composable PasswordPage iniciada")
@@ -226,8 +227,8 @@ fun PasswordCard(password: Password, navController: NavController, modifier: Mod
     Surface(
         modifier = modifier
             .clickable {
-                Log.d("PasswordCard", "Clicou no card: ${(password.titleResourceId)}")
-                navController.navigate(Routes.PASSWORD_DETAILS.replace("{passwordId}", password.titleResourceId.toString()))
+                Log.d("PasswordCard", "Clicou no card: ${(password.id)}, ${password.title}")
+                navController.navigate(Routes.PASSWORD_DETAILS.replace("{passwordId}", password.id.toString()))
             },
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surfaceVariant,
@@ -249,13 +250,13 @@ fun PasswordCard(password: Password, navController: NavController, modifier: Mod
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = stringResource(password.titleResourceId),
+                    text = password.title,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = stringResource(password.usernameResourceId),
+                    text = password.username,
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -320,8 +321,8 @@ fun PasswordPagePreview() {
 @Preview
 @Composable
 fun PasswordCardPreview() {
-    val passwordList = remember { Datasource().loadPasswords() }
+    val samplePassword = Password(id = 1, title = "Exemplo", username = "usuário", content = "senha123")
     PlainTextKotlinTheme {
-        PasswordCard(passwordList[0], rememberNavController())
+        PasswordCard(samplePassword, rememberNavController())
     }
 }

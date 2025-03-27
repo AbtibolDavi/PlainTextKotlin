@@ -44,12 +44,16 @@ import androidx.navigation.compose.rememberNavController
 import com.example.plaintextkotlin.R
 import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
 import com.example.plaintextkotlin.ui.viewmodel.AddPasswordPageViewModel
-import com.example.plaintextkotlin.ui.viewmodel.AddPasswordPageViewModelFactory
+import com.example.plaintextkotlin.ui.viewmodel.ViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddPasswordPage(navController: NavController,
-                    viewModel: AddPasswordPageViewModel = viewModel(factory = AddPasswordPageViewModelFactory(context = LocalContext.current))
+                    viewModel: AddPasswordPageViewModel = viewModel(
+                        factory = ViewModelFactory(
+                            context = LocalContext.current
+                        )
+                    )
 ) {
     var titleFocused by remember { mutableStateOf(false) }
     var usernameFocused by remember { mutableStateOf(false) }
@@ -57,6 +61,7 @@ fun AddPasswordPage(navController: NavController,
     var titleInput by remember { mutableStateOf("") }
     var usernameInput by remember { mutableStateOf("") }
     var passwordInput by remember { mutableStateOf("") }
+    val isFormValid = titleInput.isNotBlank() && usernameInput.isNotBlank() && passwordInput.isNotBlank()
 
     val context = LocalContext.current
     val isPasswordSavedState = viewModel.isPasswordSaved.collectAsState()
@@ -103,7 +108,7 @@ fun AddPasswordPage(navController: NavController,
                 placeholder = { Text(stringResource(R.string.website_placeholder))},
                 isError = titleInput.isEmpty() && titleFocused,
                 supportingText = {
-                    if (titleInput.isEmpty()) Text(stringResource(R.string.required_field))
+                    if (titleInput.isEmpty() && titleFocused) Text(stringResource(R.string.required_field))
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -129,7 +134,7 @@ fun AddPasswordPage(navController: NavController,
                 placeholder = { Text(stringResource(R.string.username_placeholder))},
                 isError = usernameInput.isEmpty() && usernameFocused,
                 supportingText = {
-                    if (usernameInput.isEmpty()) Text(stringResource(R.string.required_field))
+                    if (usernameInput.isEmpty() && usernameFocused) Text(stringResource(R.string.required_field))
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -152,7 +157,7 @@ fun AddPasswordPage(navController: NavController,
                 placeholder = { Text(stringResource(R.string.password_placeholder))},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 isError = passwordInput.isEmpty() && passwordFocused,
-                supportingText = { if (passwordInput.isEmpty()) Text(stringResource(R.string.required_field)) },
+                supportingText = { if (passwordInput.isEmpty() && passwordFocused) Text(stringResource(R.string.required_field)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .onFocusChanged { focusState -> passwordFocused = focusState.isFocused },
@@ -170,10 +175,10 @@ fun AddPasswordPage(navController: NavController,
                     viewModel.onSavePasswordClicked (
                         title = titleInput,
                         username = usernameInput,
-                        password = passwordInput,
-                        onPasswordSaved = {}
+                        passwordContent = passwordInput
                     )
                 },
+                enabled = isFormValid,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),

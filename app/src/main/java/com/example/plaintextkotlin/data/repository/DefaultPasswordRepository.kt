@@ -1,21 +1,33 @@
 package com.example.plaintextkotlin.data.repository
 
-import android.content.Context
-import com.example.plaintextkotlin.data.Datasource
+import com.example.plaintextkotlin.data.PasswordDao
 import com.example.plaintextkotlin.model.Password
+import kotlinx.coroutines.flow.Flow
 
-class DefaultPasswordRepository(private val context: Context) : PasswordRepository {
-    private val datasource = Datasource()
+class DefaultPasswordRepository(private val passwordDao: PasswordDao) : PasswordRepository {
 
-    override fun getPasswords(): List<Password> {
-        return datasource.loadPasswords()
+    override fun getPasswords(): Flow<List<Password>> {
+        return passwordDao.getAllPasswords()
     }
 
-    override fun searchPasswords(query: String): List<Password> {
-        val allPasswords = datasource.loadPasswords()
-        return allPasswords.filter { password ->
-            context.getString(password.titleResourceId).contains(query, ignoreCase = true) ||
-                    context.getString(password.usernameResourceId).contains(query, ignoreCase = true)
-        }
+    override fun searchPasswords(query: String): Flow<List<Password>> {
+        return passwordDao.searchPasswords(query)
     }
+
+    override suspend fun getPasswordById(id: Int): Password? {
+        return passwordDao.getPasswordById(id)
+    }
+
+    override suspend fun insertPassword(password: Password) {
+        passwordDao.insertPassword(password)
+    }
+
+    override suspend fun updatePassword(password: Password) {
+        passwordDao.updatePassword(password)
+    }
+
+    override suspend fun deletePassword(password: Password) {
+        passwordDao.deletePassword(password)
+    }
+
 }

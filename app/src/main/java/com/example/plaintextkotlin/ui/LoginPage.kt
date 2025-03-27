@@ -37,6 +37,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -63,12 +64,16 @@ import com.example.plaintextkotlin.R
 import com.example.plaintextkotlin.navigation.Routes
 import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
 import com.example.plaintextkotlin.ui.viewmodel.LoginPageViewModel
-import com.example.plaintextkotlin.ui.viewmodel.LoginPageViewModelFactory
+import com.example.plaintextkotlin.ui.viewmodel.ViewModelFactory
 import kotlinx.coroutines.delay
 
 @Composable
 fun LoginPage(navController: NavController,
-              viewModel: LoginPageViewModel = viewModel(factory = LoginPageViewModelFactory(context = LocalContext.current))
+              viewModel: LoginPageViewModel = viewModel(
+                  factory = ViewModelFactory(
+                      context = LocalContext.current
+                  )
+              )
 ) {
     var rememberMe by remember { mutableStateOf(false) }
     var showPassword by remember { mutableStateOf(false) }
@@ -79,10 +84,13 @@ fun LoginPage(navController: NavController,
     val authorText = stringResource(R.string.slogan_author)
     var showAuthorText by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    var loginEnabled by remember { mutableStateOf(true) }
 
+    var usernameInput by remember { mutableStateOf("") }
+    var passwordInput by remember { mutableStateOf("") }
     var usernameFocused by remember { mutableStateOf(false) }
     var passwordFocused by remember { mutableStateOf(false) }
+
+    val loginError by viewModel.loginError.collectAsState()
 
     LaunchedEffect(key1 = true) {
         for (i in sloganText.indices) {
@@ -97,7 +105,7 @@ fun LoginPage(navController: NavController,
         showImage = true
     }
 
-    loginEnabled = true
+    val isLoginButtonEnabled = usernameInput.isNotBlank() && passwordInput.isNotBlank()
 
     Box(
         modifier = Modifier
@@ -167,10 +175,12 @@ fun LoginPage(navController: NavController,
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            var usernameInput by remember { mutableStateOf("") }
+
             OutlinedTextField(
                 value = usernameInput,
-                onValueChange = { usernameInput = it },
+                onValueChange = { usernameInput = it
+                                viewModel.clearLoginError()
+                                },
                 label = {
                     Text(
                         stringResource(R.string.username_label),
@@ -194,17 +204,19 @@ fun LoginPage(navController: NavController,
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
-                isError = usernameInput.isEmpty() && usernameFocused,
-                supportingText = { if (usernameInput.isEmpty()) Text(stringResource(R.string.required_field))
+                isError = loginError != null || (usernameInput.isEmpty() && usernameFocused),
+                supportingText = { if (usernameInput.isEmpty() && usernameFocused) Text(stringResource(R.string.required_field))
                 }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            var passwordInput by remember { mutableStateOf("") }
+
             OutlinedTextField(
                 value = passwordInput,
-                onValueChange = { passwordInput = it },
+                onValueChange = { passwordInput = it
+                                viewModel.clearLoginError()
+                                },
                 label = {
                     Text(
                         stringResource(R.string.password_label),
@@ -253,10 +265,19 @@ fun LoginPage(navController: NavController,
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
-                isError = passwordInput.isEmpty() && passwordFocused,
-                supportingText = { if (passwordInput.isEmpty()) Text(stringResource(R.string.required_field))
+                isError = loginError != null || (passwordInput.isEmpty() && passwordFocused),
+                supportingText = { if (passwordInput.isEmpty() && passwordFocused) Text(stringResource(R.string.required_field))
                 }
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
+            AnimatedVisibility(visible = loginError != null) {
+                Text(
+                    text = loginError ?: "",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -280,10 +301,12 @@ fun LoginPage(navController: NavController,
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
-                enabled = loginEnabled,
+                enabled = isLoginButtonEnabled,
                 onClick = {
-                    viewModel.onLoginButtonClicked(usernameInput) { username ->
-                        navController.navigate(Routes.PASSWORD_PAGE.replace("{username}", username))
+                    viewModel.onLoginButtonClicked(usernameInput, passwordInput) { username ->
+                        navController.navigate(Routes.PASSWORD_PAGE.replace("{username}", username)) {
+                            popUpTo(Routes.LOGIN) { inclusive = true }
+                        }
                         Toast.makeText(context, context.getString(R.string.login_success), Toast.LENGTH_SHORT).show()
                     }
                 },

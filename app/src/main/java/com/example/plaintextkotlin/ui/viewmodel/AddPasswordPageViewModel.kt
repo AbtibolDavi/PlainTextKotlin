@@ -1,5 +1,7 @@
 package com.example.plaintextkotlin.ui.viewmodel
 
+import android.R.attr.password
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.plaintextkotlin.data.repository.PasswordRepository
@@ -7,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.example.plaintextkotlin.model.Password
 
 class AddPasswordPageViewModel(
     private val passwordRepository: PasswordRepository
@@ -15,34 +18,36 @@ class AddPasswordPageViewModel(
     private val _isPasswordSaved = MutableStateFlow(false)
     val isPasswordSaved: StateFlow<Boolean> = _isPasswordSaved.asStateFlow()
 
-    private val _isFormValid = MutableStateFlow(false)
-    val isFormValid: StateFlow<Boolean> = _isFormValid.asStateFlow()
-
     fun onSavePasswordClicked(
         title: String,
         username: String,
-        password: String,
-        onPasswordSaved: () -> Unit
+        passwordContent: String,
     ) {
-        viewModelScope.launch {
-            // TODO: Implementar a lógica para salvar a senha no repositório de dados.
-            // Por enquanto, vamos apenas simular o salvamento e notificar a UI.
-            if (title.isNotBlank() && username.isNotBlank() && password.isNotBlank()) {
-                // Simulação de salvamento bem-sucedido
-                _isPasswordSaved.value = true
-                onPasswordSaved()
-            } else {
-                // Simulação de falha no salvamento (campos inválidos)
-                _isFormValid.value = false
+        if (title.isNotBlank() && username.isNotBlank() && passwordContent.isNotBlank()) {
+            val newPassword = Password(
+                title = title.trim(),
+                username = username.trim(),
+                content = passwordContent
+            )
+            viewModelScope.launch {
+                try {
+                    Log.d("AddPasswordPageViewModel", "Tentando inserir senha ${newPassword.title}")
+                    passwordRepository.insertPassword(newPassword)
+                    _isPasswordSaved.value = true
+                    Log.d(
+                        "AddPasswordPageViewModel",
+                        "Senha inserida com sucesso ${newPassword.title}"
+                    )
+                } catch (e: Exception) {
+                    Log.e("AddPasswordPageViewModel", "Erro ao inserir senha", e)
+                }
             }
+        } else {
+            Log.w("AddPasswordPageViewModel", "Campos vazios ou em branco")
         }
     }
 
     fun resetIsPasswordSaved() {
         _isPasswordSaved.value = false
-    }
-
-    fun validateForm(title: String, username: String, password: String) {
-        _isFormValid.value = title.isNotBlank() && username.isNotBlank() && password.isNotBlank()
     }
 }

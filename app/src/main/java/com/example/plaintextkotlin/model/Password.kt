@@ -1,15 +1,19 @@
 package com.example.plaintextkotlin.model
 
-import android.os.Parcelable
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
+import androidx.room.PrimaryKey
+import androidx.room.Entity
 import com.example.plaintextkotlin.R
-import kotlinx.parcelize.Parcelize
 
-@Parcelize
+
+@Entity(tableName = "passwords")
 data class Password(
-    @StringRes val titleResourceId: Int,
-    @StringRes val usernameResourceId: Int,
-    @StringRes val contentResourceId: Int,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+
+    val title: String,
+    val username: String,
+    val content: String,
+
     @DrawableRes val imageResourceId: Int = R.drawable.item_key_novo
-) : Parcelable
+)
