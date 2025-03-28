@@ -44,6 +44,7 @@
     <string name="password_placeholder">Sua senha secreta</string>
     <string name="error_loading_details">Erro ao carregar detalhes</string>
     <string name="successful_deleted_pwd">Senha excluída!</string>d
+    <string name="password_delete_error">Erro ao excluir senha</string>
     <string name="delete_alert_dialog">Confirmar exclusão</string>
     <string name="delete_alert_dialog_text">Tem certeza que deseja excluir esta senha? Esta ação não pode ser desfeita.</string>
     <string name="clean_search">Limpar pesquisa</string>

@@ -38,7 +38,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = viewModel(factory = ViewModelFactory(LocalContext.current))
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope() // Usar escopo da composição para lançar Snackbar
+    val scope = rememberCoroutineScope() // Usar escopo da composição para lançar Snackbar
 
     // Coleta de estados do ViewModel
     val newUsername by viewModel.newUsername.collectAsState()
@@ -60,7 +60,7 @@ fun SettingsScreen(
     LaunchedEffect(viewModel.uiMessage, snackbarHostState) {
         viewModel.uiMessage.collectLatest { message ->
             // Lança showSnackbar no escopo da composição para segurança
-            coroutineScope.launch {
+            scope.launch {
                 snackbarHostState.showSnackbar(
                     message = message,
                     duration = SnackbarDuration.Short

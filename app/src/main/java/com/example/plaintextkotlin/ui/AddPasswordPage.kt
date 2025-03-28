@@ -1,5 +1,6 @@
 package com.example.plaintextkotlin.ui
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -9,7 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -25,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +47,7 @@ import com.example.plaintextkotlin.R
 import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
 import com.example.plaintextkotlin.ui.viewmodel.AddPasswordPageViewModel
 import com.example.plaintextkotlin.ui.viewmodel.ViewModelFactory
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,13 +67,16 @@ fun AddPasswordPage(navController: NavController,
     val isFormValid = titleInput.isNotBlank() && usernameInput.isNotBlank() && passwordInput.isNotBlank()
 
     val context = LocalContext.current
-    val isPasswordSavedState = viewModel.isPasswordSaved.collectAsState()
 
-    LaunchedEffect(isPasswordSavedState.value) {
-        if (isPasswordSavedState.value) {
-            Toast.makeText(context, context.getString(R.string.password_saved_success), Toast.LENGTH_SHORT).show()
-            viewModel.resetIsPasswordSaved()
-            navController.popBackStack()
+    LaunchedEffect(viewModel.uiMessage, navController, context) {
+        viewModel.uiMessage.collectLatest { messageResId ->
+            val message = context.getString(messageResId)
+            Log.d("AddPasswordPage", "Mostrando Toast: $message")
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            if (messageResId == R.string.password_saved_success) {
+                Log.d("AddPasswordPage", "Mensagem de sucesso, navegando de volta...")
+                navController.popBackStack()
+            }
         }
     }
 
@@ -95,7 +101,8 @@ fun AddPasswordPage(navController: NavController,
                 .padding(paddingValues)
                 .safeDrawingPadding()
                 .background(MaterialTheme.colorScheme.background)
-                .padding(16.dp),
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 

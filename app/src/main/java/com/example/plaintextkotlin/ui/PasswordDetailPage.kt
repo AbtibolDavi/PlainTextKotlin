@@ -5,9 +5,11 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ContentCopy
@@ -30,17 +32,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.plaintextkotlin.R
-import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
 import com.example.plaintextkotlin.ui.viewmodel.PasswordDetailPageViewModel
 import com.example.plaintextkotlin.ui.viewmodel.ViewModelFactory
-import java.lang.Compiler.enable
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,7 +78,6 @@ fun PasswordDetailPage(
     val editableUsername by viewModel.editableUsername.collectAsState()
     val editableContent by viewModel.editableContent.collectAsState()
     val saveStatus by viewModel.saveStatus.collectAsState()
-    val passwordDeleted by viewModel.passwordDeleted.collectAsState()
     val isEditFormValid = editableTitle.isNotBlank() && editableUsername.isNotBlank() && editableContent.isNotBlank()
 
     var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
@@ -88,24 +86,13 @@ fun PasswordDetailPage(
     val clipboardManager = LocalClipboardManager.current
     var showPasswordText by remember { mutableStateOf(false) }
 
-    LaunchedEffect(saveStatus) {
-        when (saveStatus) {
-            PasswordDetailPageViewModel.SaveStatus.Success -> {
-                Toast.makeText(context, "Senha atualizada!", Toast.LENGTH_SHORT).show()
+    LaunchedEffect(viewModel.uiMessage, navController, context) {
+        viewModel.uiMessage.collectLatest { messageResId ->
+            val message = context.getString(messageResId)
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            if (messageResId == R.string.successful_deleted_pwd) {
+                navController.popBackStack()
             }
-            PasswordDetailPageViewModel.SaveStatus.Error -> {
-                Toast.makeText(context, "Erro ao salvar.", Toast.LENGTH_SHORT).show()
-            }
-            else -> {}
-        }
-    }
-
-    LaunchedEffect(passwordDeleted) {
-        if (passwordDeleted) {
-            Toast.makeText(context,
-                context.getString(R.string.successful_deleted_pwd), Toast.LENGTH_SHORT).show()
-            navController.popBackStack()
-            viewModel.resetDeletionStatus()
         }
     }
 
@@ -190,7 +177,8 @@ fun PasswordDetailPage(
                         .fillMaxSize()
                         .padding(paddingValues)
                         .background(MaterialTheme.colorScheme.background)
-                        .padding(16.dp),
+                        .padding(16.dp)
+                        .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
@@ -225,7 +213,7 @@ fun PasswordDetailPage(
                         OutlinedTextField(
                             value = editableUsername,
                             onValueChange = { viewModel.updateEditableUsername(it) },
-                            label = { Text(stringResource(R.string.username_label)) },
+                            label = { Text(stringResource(R.string.username_label_required)) },
                             modifier = Modifier.fillMaxWidth(),
                             isError = editableUsername.isBlank(),
                             supportingText = { if (editableUsername.isBlank()) Text(stringResource(R.string.required_field))}
@@ -255,7 +243,6 @@ fun PasswordDetailPage(
                             }
                         }
                     }
-                    // Campo Login
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -309,11 +296,7 @@ fun PasswordDetailPage(
                                 }
                                 IconButton(onClick = {
                                     clipboardManager.setText(AnnotatedString(pwd.content))
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.password_copied),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    Toast.makeText(context, context.getString(R.string.password_copied), Toast.LENGTH_SHORT).show()
                                 }) {
                                     Icon(
                                         Icons.Filled.ContentCopy,
@@ -338,21 +321,6 @@ fun PasswordDetailPage(
                 }
             }
         }
-//        ?: run {
-//        Log.d("PasswordDetailPage", "Password é null. Exibindo estado de carregamento/vazio.")
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(16.dp),
-//            contentAlignment = Alignment.Center
-//        ) {
-//            if (saveStatus == PasswordDetailPageViewModel.SaveStatus.Error) {
-//                Text(stringResource(R.string.error_loading_details))
-//            } else {
-//                CircularProgressIndicator()
-//            }
-//        }
-//    }
 }
 
 //@Preview

@@ -7,11 +7,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.plaintextkotlin.R
 import com.example.plaintextkotlin.data.repository.PasswordRepository
 import com.example.plaintextkotlin.model.Password
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PasswordDetailPageViewModel(
     private val passwordRepository: PasswordRepository
@@ -32,15 +36,15 @@ class PasswordDetailPageViewModel(
     private val _editableContent = MutableStateFlow("")
     val editableContent: StateFlow<String> = _editableContent.asStateFlow()
 
+    enum class SaveStatus { Idle, Saving, Success, Error }
     private val _saveStatus = MutableStateFlow<SaveStatus>(SaveStatus.Idle)
     val saveStatus: StateFlow<SaveStatus> = _saveStatus.asStateFlow()
 
-    private val _passwordDeleted = MutableStateFlow(false)
-    val passwordDeleted: StateFlow<Boolean> = _passwordDeleted.asStateFlow()
-
-    enum class SaveStatus { Idle, Saving, Success, Error }
+    private val _uiMessage = MutableSharedFlow<Int>()
+    val uiMessage: SharedFlow<Int> = _uiMessage.asSharedFlow()
 
     private var currentPasswordId: Int? = null
+    private var detailsLoaded = false
 
     fun loadDetailsIfNeeded(id: Int) {
         if (id != -1 && id != currentPasswordId) {
@@ -56,7 +60,6 @@ class PasswordDetailPageViewModel(
         }
     }
 
-    private var detailsLoaded = false
 
     private fun loadPasswordDetailsInternal(passwordId: Int) {
         viewModelScope.launch {
@@ -105,6 +108,7 @@ class PasswordDetailPageViewModel(
         val content = _editableContent.value
 
         if (title.isBlank() || username.isBlank() || content.isBlank()) {
+            viewModelScope.launch { try { _uiMessage.emit(R.string.fill_required_fields) } catch (_: Exception) {} }
             Log.w("PasswordDetailVM", "Tentativa de salvar senha com campos em branco")
             return
         }
@@ -120,16 +124,23 @@ class PasswordDetailPageViewModel(
             _saveStatus.value = SaveStatus.Saving
             try {
                 Log.d("PasswordDetailVM", "Tentativa de salvar senha com ID: $currentId")
-                passwordRepository.updatePassword(updatedPassword)
+                withContext(Dispatchers.IO) {
+                    passwordRepository.updatePassword(updatedPassword)
+                }
                 _password.value = updatedPassword
                 _isEditing.value = false
                 _saveStatus.value = SaveStatus.Success
                 Log.d("PasswordDetailVM", "Senha salva com sucesso")
-                kotlinx.coroutines.delay(1500)
-                _saveStatus.value = SaveStatus.Idle
+                _uiMessage.emit(R.string.password_saved_success)
             } catch (e: Exception) {
                 Log.e("PasswordDetailVM", "Erro ao salvar senha", e)
                 _saveStatus.value = SaveStatus.Error
+                try { _uiMessage.emit(R.string.password_saved_error) } catch (_: Exception) {}
+            } finally {
+                if (_saveStatus.value != SaveStatus.Saving) {
+                    kotlinx.coroutines.delay(1000)
+                    _saveStatus.value = SaveStatus.Idle
+                }
             }
         }
     }
@@ -141,22 +152,20 @@ class PasswordDetailPageViewModel(
             viewModelScope.launch {
                 try {
                     Log.d("PasswordDetailVM", "Tentativa de excluir senha com ID: ${passwordToDelete.id}")
-                    passwordRepository.deletePassword(passwordToDelete)
-                    _passwordDeleted.value = true
+                    withContext(Dispatchers.IO) {
+                        passwordRepository.deletePassword(passwordToDelete)
+                    }
+                    _uiMessage.emit(R.string.successful_deleted_pwd)
                     Log.d("PasswordDetailVM", "Senha excluída com sucesso")
                 } catch (e: Exception) {
                     Log.e("PasswordDetailVM", "Erro ao excluir senha", e)
-                    _saveStatus.value = SaveStatus.Error
+                    try { _uiMessage.emit(R.string.password_delete_error) } catch (_: Exception) {}
                 }
             }
         } else {
             Log.w("PasswordDetailVM", "Tentativa de excluir senha sem senha selecionada")
-            _saveStatus.value = SaveStatus.Error
+            viewModelScope.launch { try { _uiMessage.emit(R.string.password_delete_error) } catch (_: Exception) {} }
         }
-    }
-
-    fun resetDeletionStatus() {
-        _passwordDeleted.value = false
     }
 
     init {
