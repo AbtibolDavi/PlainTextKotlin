@@ -89,6 +89,7 @@ fun PasswordPage(navController: NavController,
     val passwordsState = viewModel.passwords.collectAsState()
     Log.d("PasswordPage", "Estado passwordsState coletado, tamanho da lista: ${passwordsState.value.size}")
     var showWelcomeAppBar by remember { mutableStateOf(true) }
+    val welcomeMessageUsername = if (username.isNullOrEmpty()) "usuário" else username
 
     LaunchedEffect(key1 = Unit) {
         delay(2000)
@@ -109,7 +110,7 @@ fun PasswordPage(navController: NavController,
             ) { isWelcomeAppBarVisible ->
                 if (isWelcomeAppBarVisible) {
                     CenterAlignedTopAppBar(
-                        title = { Text("Bem-vindo, ${if (username.isNullOrEmpty()) "usuário" else username}") }
+                        title = { Text(stringResource(R.string.welcome_user, welcomeMessageUsername)) }
                     )
                 } else {
                     CenterAlignedTopAppBar(

@@ -1,53 +1,73 @@
 <resources>
     <string name="app_name">PlainTextKotlin</string>
-    <string name="plain_text_logo">Logotipo do app</string>
-    <string name="item_right_arrow">Entrar</string>
-    <string name="slogan_text">\"The most secure password manager\"</string>
-    <string name="slogan_author">Bob and Alice</string>
-    <string name="login_message">Digite suas credenciais para continuar</string>
-    <string name="remember_me_check">Salvar informação de login</string>
-    <string name="password_label">Senha: </string>
-    <string name="username_label">Login: </string>
-    <string name="password_label_required">Senha*</string>
-    <string name="username_label_required">Login*</string>
-    <string name="login_button_text">ENTRAR</string>
-    <string name="hide_password">Esconder senha</string>
-    <string name="show_password">Mostrar senha</string>
-    <string name="search_passwords">Pesquisar senhas</string>
-    <string name="search">Pesquisa</string>
-    <string name="no_password_found">Nenhuma senha encontrada</string>
-    <string name="add_new_password">Toque no botão + para adicionar uma nova senha</string>
-    <string name="add_password">Adicionar senha</string>
-    <string name="save_password">Salvar senha</string>
-    <string name="new_password_title">Nova senha</string>
-    <string name="password_detail_title">Detalhes da senha</string>
-    <string name="website_label">Nome do site/aplicativo*</string>
-    <string name="copy_login">Copiar login</string>
+
+    <!-- Common UI Elements -->
     <string name="back">Voltar</string>
     <string name="edit">Editar</string>
     <string name="delete">Excluir</string>
     <string name="cancel">Cancelar</string>
-    <string name="edit_password_title">Editar senha</string>
-    <string name="save_changes">Salvar alterações</string>
+    <string name="search">Pesquisa</string>
+    <string name="copy_login">Copiar login</string>
     <string name="copy_password">Copiar senha</string>
-    <string name="delete_password">Excluir Senha</string>
-    <string name="password_saved_success">Senha salva com sucesso!</string>
-    <string name="password_saved_error">Erro ao salvar senha</string>
-    <string name="fill_required_fields">Preencha todos os campos obrigatórios</string>
+    <string name="hide_password">Esconder senha</string>
+    <string name="show_password">Mostrar senha</string>
     <string name="required_field">*obrigatório</string>
+    <string name="password_label_required">Senha*</string>
+    <string name="username_label_required">Login*</string>
+
+    <!-- Login Page -->
+    <string name="plain_text_logo">Logotipo do app</string>
+    <string name="slogan_text">\"The most secure password manager\"</string>
+    <string name="slogan_author">Bob and Alice</string>
+    <string name="login_message">Digite suas credenciais para continuar</string>
+    <string name="remember_me_check">Salvar informação de login</string>
+    <string name="login_button_text">ENTRAR</string>
     <string name="login_success">Login efetuado com sucesso!</string>
-    <string name="login_copied">Login copiado</string>
-    <string name="password_copied">Senha copiada</string>
+
+    <!-- Password List Page -->
     <string name="password_page_title">Senhas Salvas</string>
+    <string name="welcome_user">Bem-vindo, %1$s</string>
+    <string name="search_passwords">Pesquisar senhas</string>
+    <string name="no_password_found">Nenhuma senha encontrada</string>
+    <string name="add_new_password">Toque no botão + para adicionar uma nova senha</string>
+    <string name="add_password">Adicionar senha</string>
+
+    <!--Add/Edit Password Page-->
+    <string name="new_password_title">Nova senha</string>
+    <string name="edit_password_title">Editar senha</string>
+    <string name="website_label">Site/Aplicativo*</string>
     <string name="website_placeholder">Ex: Netflix, Gmail, etc.</string>
     <string name="username_placeholder">Seu login de usuário</string>
     <string name="password_placeholder">Sua senha secreta</string>
+    <string name="save_password">Salvar senha</string>
+    <string name="save_changes">Salvar alterações</string>
+    <string name="password_saved_success">Senha salva com sucesso!</string>
+    <string name="password_saved_error">Erro ao salvar senha</string>
+    <string name="fill_required_fields">Preencha todos os campos obrigatórios</string>
+
+    <!-- Password Detail Page -->
+    <string name="password_detail_title">Detalhes da senha</string>
+    <string name="password_label">Senha: </string>
+    <string name="username_label">Login: </string>
+    <string name="login_copied">Login copiado</string>
+    <string name="password_copied">Senha copiada</string>
+    <string name="delete_password">Excluir Senha</string>
     <string name="error_loading_details">Erro ao carregar detalhes</string>
-    <string name="successful_deleted_pwd">Senha excluída!</string>d
+    <string name="successful_deleted_pwd">Senha excluída com sucesso!</string>d
     <string name="password_delete_error">Erro ao excluir senha</string>
     <string name="delete_alert_dialog">Confirmar exclusão</string>
     <string name="delete_alert_dialog_text">Tem certeza que deseja excluir esta senha? Esta ação não pode ser desfeita.</string>
-    <string name="clean_search">Limpar pesquisa</string>
-    <string name="password_not_found">Nenhum resultado para %1$s</string>
-    <string name="try_another_search">Tente um termo de busca diferente</string>
+
+    <!-- Settings Page -->
+    <string name="settings_title">Configurações</string>
+    <string name="security_warning">AVISO: As credenciais mestras são armazenadas localmente em texto plano. Isso é TOTALMENTE SUPER seguro!</string>
+    <string name="change_master_login">Alterar Login Mestre</string>
+    <string name="new_username_label">Novo Nome de Usuário</string>
+    <string name="save_new_login_button">Salvar Novo Login</string>
+    <string name="change_master_password">Alterar Senha Mestra</string>
+    <string name="new_password_label">Nova Senha</string>
+    <string name="confirm_new_password_label">Confirmar Nova Senha</string>
+    <string name="save_new_password_button">Salvar Nova Senha</string>
+    <string name="account_section_title">Conta</string>
+    <string name="logout_button">Sair / Logout</string>
 </resources>

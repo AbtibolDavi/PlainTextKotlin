@@ -1,6 +1,7 @@
 package com.example.plaintextkotlin.ui
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -86,39 +87,40 @@ fun SettingsScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Configurações") },
+                title = { Text(stringResource(R.string.settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = { if (!isAnyOperationLoading) navController.popBackStack() }) { // Previne voltar durante loading
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
-        }
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState())
+                .background(MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             // --- AVISO DE SEGURANÇA ---
             Text(
-                text = "AVISO: As credenciais mestras são armazenadas localmente em texto plano. Isso é TOTALMENTE SUPER seguro!",
+                text = stringResource(R.string.security_warning),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
             // --- Seção Alterar Login Mestre ---
-            Text("Alterar Login Mestre", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.change_master_login), style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = newUsername,
                 onValueChange = viewModel::updateNewUsername,
-                label = { Text("Novo Nome de Usuário") },
+                label = { Text(stringResource(R.string.new_username_label)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 enabled = !isAnyOperationLoading // Desabilita se qualquer operação estiver ativa
@@ -134,19 +136,19 @@ fun SettingsScreen(
                 if (isSavingUsername) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.onPrimary)
                 } else {
-                    Text("Salvar Novo Login")
+                    Text(stringResource(R.string.save_new_login_button))
                 }
             }
 
             Spacer(modifier = Modifier.height(32.dp))
 
             // --- Seção Alterar Senha Mestra ---
-            Text("Alterar Senha Mestra", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.change_master_password), style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField( // Nova Senha
                 value = newPassword,
                 onValueChange = viewModel::updateNewPassword,
-                label = { Text("Nova Senha") },
+                label = { Text(stringResource(R.string.new_password_label)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 visualTransformation = if (showNewPassword) VisualTransformation.None else PasswordVisualTransformation(),
@@ -165,7 +167,7 @@ fun SettingsScreen(
             OutlinedTextField( // Confirmar Nova Senha
                 value = confirmPassword,
                 onValueChange = viewModel::updateConfirmPassword,
-                label = { Text("Confirmar Nova Senha") },
+                label = { Text(stringResource(R.string.confirm_new_password_label)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 visualTransformation = if (showConfirmPassword) VisualTransformation.None else PasswordVisualTransformation(),
@@ -192,14 +194,14 @@ fun SettingsScreen(
                 if (isSavingPassword) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.onPrimary)
                 } else {
-                    Text("Salvar Nova Senha")
+                    Text(stringResource(R.string.save_new_password_button))
                 }
             }
 
             Spacer(modifier = Modifier.height(32.dp))
 
             // --- Seção Conta ---
-            Text("Conta", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.account_section_title), style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedButton(
                 onClick = viewModel::logout,
@@ -213,7 +215,7 @@ fun SettingsScreen(
                 if (isLoggingOut) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.error)
                 } else {
-                    Text("Sair / Logout")
+                    Text(stringResource(R.string.logout_button))
                 }
             }
         } // Fim da Column

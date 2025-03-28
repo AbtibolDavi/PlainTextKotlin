@@ -5,7 +5,8 @@ import android.content.SharedPreferences
 
 class PreferenceManager(context: Context) {
 
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences =
+        context.getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
 
     companion object {
         private const val PREFS_FILENAME = "com.example.plaintextkotlin.prefs"
@@ -16,12 +17,8 @@ class PreferenceManager(context: Context) {
         private const val PREF_KEY_REMEMBER_ME_USERNAME = "remember_me_username"
         private const val PREF_KEY_REMEMBER_ME_PASSWORD = "remember_me_password"
 
-
         const val DEFAULT_APP_USERNAME = "admin"
         const val DEFAULT_APP_PASSWORD = "password"
-    }
-    init {
-        sharedPreferences = context.getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
     }
 
     fun saveAppCredentials(username: String, password: String) {

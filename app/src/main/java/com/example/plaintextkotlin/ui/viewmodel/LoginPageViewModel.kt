@@ -35,7 +35,7 @@ class LoginPageViewModel(
             val storedPassword = preferenceManager.getAppPassword() ?: PreferenceManager.DEFAULT_APP_PASSWORD
 
             if (usernameInput.isBlank() || passwordInput.isBlank()) {
-                _loginError.value = "Usuário e senha são obrigatórios."
+                _loginError.value = "Usuário e senha são obrigatórios"
             } else if (usernameInput == storedUsername && passwordInput == storedPassword) {
                 _loginError.value = null
                 preferenceManager.saveRememberMeState(rememberMeChecked)
@@ -46,7 +46,7 @@ class LoginPageViewModel(
                 }
                 navigateToPasswordPage(usernameInput)
             } else {
-                _loginError.value = "Usuário ou senha incorretos."
+                _loginError.value = "Usuário ou senha incorretos"
             }
         }
     }

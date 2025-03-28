@@ -46,7 +46,7 @@ class PasswordPageViewModel(
 
     fun searchPasswords(query: String) {
         searchJob?.cancel()
-        currentQuery = query
+        currentQuery = query.trim()
 
         if (query.isBlank()) {
             Log.d("PasswordPageViewModel", "Query vazia, carregando todas as senhas")
