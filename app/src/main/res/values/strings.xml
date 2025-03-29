@@ -31,6 +31,7 @@
     <string name="no_password_found">Nenhuma senha encontrada</string>
     <string name="add_new_password">Toque no botão + para adicionar uma nova senha</string>
     <string name="add_password">Adicionar senha</string>
+    <string name="clear_search">Limpar senha</string>
 
     <!-- Add/Edit Password Page -->
     <string name="new_password_title">Nova senha</string>

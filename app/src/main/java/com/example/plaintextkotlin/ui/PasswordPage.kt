@@ -31,6 +31,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -88,6 +89,11 @@ fun PasswordPage(
     val passwordsState = viewModel.passwords.collectAsState()
     var showWelcomeAppBar by remember { mutableStateOf(true) }
     val welcomeMessageUsername = if (username.isNullOrEmpty()) "usuário" else username
+
+    LaunchedEffect(Unit) {
+        searchText = ""
+        viewModel.searchPasswords(searchText)
+    }
 
     LaunchedEffect(key1 = Unit) {
         delay(2000)
@@ -169,13 +175,24 @@ fun SearchBar(searchText: String, onSearchTextChanged: (String) -> Unit) {
                 contentDescription = stringResource(R.string.search)
             )
         },
+        trailingIcon = {
+            if (searchText.isNotEmpty()) {
+                IconButton(onClick = { onSearchTextChanged("") }) {
+                    Icon(
+                        imageVector = Icons.Filled.Clear,
+                        contentDescription = stringResource(R.string.clear_search)
+                    )
+                }
+            }
+        },
         shape = RoundedCornerShape(24.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             focusedBorderColor = MaterialTheme.colorScheme.primary,
             unfocusedBorderColor = MaterialTheme.colorScheme.surface
-        )
+        ),
+        singleLine = true
     )
 }
 

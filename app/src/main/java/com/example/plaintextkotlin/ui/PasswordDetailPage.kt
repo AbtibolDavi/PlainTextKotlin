@@ -230,7 +230,9 @@ fun PasswordDetailPage(
                         label = { Text(stringResource(R.string.username_label_required)) },
                         modifier = Modifier.fillMaxWidth(),
                         isError = editableUsername.isBlank(),
-                        supportingText = { if (editableUsername.isBlank()) Text(stringResource(R.string.required_field)) })
+                        supportingText = { if (editableUsername.isBlank()) Text(stringResource(R.string.required_field)) },
+                        singleLine = true
+                    )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -251,8 +253,9 @@ fun PasswordDetailPage(
                                 )
                             }
                         },
+                        singleLine = true,
                         isError = editableContent.isBlank(),
-                        supportingText = { if (editableContent.isBlank()) Text(stringResource(R.string.required_field)) }
+                        supportingText = { if (editableContent.isBlank()) Text(stringResource(R.string.required_field)) },
                     )
                 } else {
                     Text(
@@ -356,10 +359,7 @@ fun PasswordDetailPage(
 
 class FakePasswordRepositoryPreview : PasswordRepository {
     val samplePassword = Password(
-        id = 1,
-        title = "Preview Website",
-        username = "preview.user",
-        content = "password123"
+        id = 1, title = "Preview Website", username = "preview.user", content = "password123"
     )
 
     override fun getPasswords(): Flow<List<Password>> = flowOf(listOf(samplePassword))
@@ -376,9 +376,9 @@ class FakePasswordRepositoryPreview : PasswordRepository {
         return if (id == samplePassword.id) samplePassword else null
     }
 
-    override suspend fun insertPassword(password: Password) { }
-    override suspend fun updatePassword(password: Password) { }
-    override suspend fun deletePassword(password: Password) { }
+    override suspend fun insertPassword(password: Password) {}
+    override suspend fun updatePassword(password: Password) {}
+    override suspend fun deletePassword(password: Password) {}
 }
 
 @Preview(showBackground = true, name = "Password Detail View")

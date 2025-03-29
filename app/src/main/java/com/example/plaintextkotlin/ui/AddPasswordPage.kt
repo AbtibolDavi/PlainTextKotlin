@@ -55,8 +55,7 @@ import kotlinx.coroutines.flow.collectLatest
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddPasswordPage(
-    navController: NavController,
-    viewModel: AddPasswordPageViewModel = viewModel(
+    navController: NavController, viewModel: AddPasswordPageViewModel = viewModel(
         factory = ViewModelFactory(context = LocalContext.current)
     )
 ) {
@@ -92,14 +91,11 @@ fun AddPasswordPage(
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            stringResource(R.string.back)
+                            Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back)
                         )
                     }
-                }
-            )
-        }
-    ) { paddingValues ->
+                })
+        }) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -132,7 +128,8 @@ fun AddPasswordPage(
                     unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     focusedTextColor = MaterialTheme.colorScheme.onSurface,
                     unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                ),
+                singleLine = true
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -156,7 +153,8 @@ fun AddPasswordPage(
                     unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     focusedTextColor = MaterialTheme.colorScheme.onSurface,
                     unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                ),
+                singleLine = true
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -194,7 +192,8 @@ fun AddPasswordPage(
                     unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     focusedTextColor = MaterialTheme.colorScheme.onSurface,
                     unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                ),
+                singleLine = true
             )
 
             Spacer(modifier = Modifier.height(24.dp))
