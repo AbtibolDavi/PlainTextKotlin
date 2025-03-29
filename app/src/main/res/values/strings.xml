@@ -32,7 +32,7 @@
     <string name="add_new_password">Toque no botão + para adicionar uma nova senha</string>
     <string name="add_password">Adicionar senha</string>
 
-    <!--Add/Edit Password Page-->
+    <!-- Add/Edit Password Page -->
     <string name="new_password_title">Nova senha</string>
     <string name="edit_password_title">Editar senha</string>
     <string name="website_label">Site/Aplicativo*</string>
@@ -70,4 +70,13 @@
     <string name="save_new_password_button">Salvar Nova Senha</string>
     <string name="account_section_title">Conta</string>
     <string name="logout_button">Sair / Logout</string>
+
+    <!-- About Page -->
+    <string name="about_title">Sobre o App</string>
+    <string name="about_button">Sobre</string>
+    <string name="about_version">Versão %1$s</string>
+    <string name="about_version_unknown">desconhecida</string>
+    <string name="about_description">Um gerenciador de senhas simples e inseguro para fins extremamente sérios.</string>
+    <string name="security_warning_crucial">ATENÇÃO: Este aplicativo armazena TODAS as senhas (incluindo a mestra) em TEXTO PLANO no seu dispositivo. É EXTREMAMENTE SEGURO. COM CERTEZA use para senhas reais!</string>
+    <string name="about_developer_info">Desenvolvido por Davi Carvalho</string>
 </resources>

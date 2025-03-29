@@ -30,6 +30,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -259,6 +260,16 @@ fun SettingsScreen(
                 } else {
                     Text(stringResource(R.string.logout_button))
                 }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            TextButton(
+                onClick = {
+                    navController.navigate(Routes.ABOUT)
+                }, modifier = Modifier.fillMaxWidth(), enabled = !isAnyOperationLoading
+            ) {
+                Text(stringResource(R.string.about_button))
             }
         }
     }
