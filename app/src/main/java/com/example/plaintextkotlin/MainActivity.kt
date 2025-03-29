@@ -1,7 +1,6 @@
 package com.example.plaintextkotlin
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -18,14 +17,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.plaintextkotlin.navigation.Navigation
 import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
-import com.example.plaintextkotlin.ui.viewmodel.SplashViewModel // Importar ViewModel
+import com.example.plaintextkotlin.ui.viewmodel.SplashViewModel
 import com.example.plaintextkotlin.ui.viewmodel.ViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            PlainTextKotlinTheme() {
+            PlainTextKotlinTheme {
                 val splashViewModel: SplashViewModel = viewModel(
                     factory = ViewModelFactory(LocalContext.current)
                 )
@@ -33,10 +32,8 @@ class MainActivity : ComponentActivity() {
                 val startDestination by splashViewModel.startDestination.collectAsState()
 
                 if (startDestination == null) {
-                    Log.d("MainActivity", "Start Destination: null")
                     LoadingScreen()
                 } else {
-                    Log.d("MainActivity", "Start Destination: $startDestination")
                     Navigation(startDestination = startDestination!!)
                 }
             }
@@ -48,7 +45,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun LoadingScreen() {
     Box(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator()

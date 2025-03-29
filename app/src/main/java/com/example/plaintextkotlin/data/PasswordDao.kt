@@ -17,7 +17,7 @@ interface PasswordDao {
     @Query("SELECT * FROM passwords WHERE id = :id")
     suspend fun getPasswordById(id: Int): Password?
 
-    @Insert(onConflict= OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPassword(password: Password)
 
     @Update
@@ -28,5 +28,4 @@ interface PasswordDao {
 
     @Query("SELECT * FROM passwords WHERE title LIKE '%' || :query || '%' OR username LIKE '%' || :query || '%' OR content LIKE '%' || :query || '%' ORDER BY title ASC ")
     fun searchPasswords(query: String): Flow<List<Password>>
-
 }

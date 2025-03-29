@@ -11,28 +11,31 @@ import kotlinx.coroutines.launch
 class LoginPageViewModel(
     private val preferenceManager: PreferenceManager
 ) : ViewModel() {
-
     private val _loginError = MutableStateFlow<String?>(null)
     val loginError: StateFlow<String?> = _loginError.asStateFlow()
 
     private val _initialRememberMeState = MutableStateFlow(false)
-    val initialRememberMeState : StateFlow<Boolean> = _initialRememberMeState.asStateFlow()
+    val initialRememberMeState: StateFlow<Boolean> = _initialRememberMeState.asStateFlow()
 
     private val _initialUsername = MutableStateFlow("")
-    val initialUsername : StateFlow<String> = _initialUsername.asStateFlow()
+    val initialUsername: StateFlow<String> = _initialUsername.asStateFlow()
 
     init {
         _initialRememberMeState.value = preferenceManager.getRememberMeState()
         _initialUsername.value = preferenceManager.getRememberMeUsername() ?: ""
     }
 
-    fun onLoginButtonClicked(usernameInput: String,
-                             passwordInput: String,
-                             rememberMeChecked: Boolean,
-                             navigateToPasswordPage: (String) -> Unit) {
+    fun onLoginButtonClicked(
+        usernameInput: String,
+        passwordInput: String,
+        rememberMeChecked: Boolean,
+        navigateToPasswordPage: (String) -> Unit
+    ) {
         viewModelScope.launch {
-            val storedUsername = preferenceManager.getAppUsername() ?: PreferenceManager.DEFAULT_APP_USERNAME
-            val storedPassword = preferenceManager.getAppPassword() ?: PreferenceManager.DEFAULT_APP_PASSWORD
+            val storedUsername =
+                preferenceManager.getAppUsername() ?: PreferenceManager.DEFAULT_APP_USERNAME
+            val storedPassword =
+                preferenceManager.getAppPassword() ?: PreferenceManager.DEFAULT_APP_PASSWORD
 
             if (usernameInput.isBlank() || passwordInput.isBlank()) {
                 _loginError.value = "Usuário e senha são obrigatórios"

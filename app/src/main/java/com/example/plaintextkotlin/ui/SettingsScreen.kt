@@ -2,7 +2,13 @@ package com.example.plaintextkotlin.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -10,8 +16,29 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -39,14 +66,12 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = viewModel(factory = ViewModelFactory(LocalContext.current))
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope() // Usar escopo da composição para lançar Snackbar
+    val scope = rememberCoroutineScope()
 
-    // Coleta de estados do ViewModel
     val newUsername by viewModel.newUsername.collectAsState()
     val newPassword by viewModel.newPassword.collectAsState()
     val confirmPassword by viewModel.confirmPassword.collectAsState()
 
-    // Coleta estados de loading separados
     val isSavingUsername by viewModel.isSavingUsername.collectAsState()
     val isSavingPassword by viewModel.isSavingPassword.collectAsState()
     val isLoggingOut by viewModel.isLoggingOut.collectAsState()
@@ -54,46 +79,38 @@ fun SettingsScreen(
     var showNewPassword by remember { mutableStateOf(false) }
     var showConfirmPassword by remember { mutableStateOf(false) }
 
-    // Habilita/desabilita geral baseado se ALGUMA operação está em andamento
     val isAnyOperationLoading = isSavingUsername || isSavingPassword || isLoggingOut
 
-    // Observador para mensagens da UI (Snackbar)
     LaunchedEffect(viewModel.uiMessage, snackbarHostState) {
         viewModel.uiMessage.collectLatest { message ->
-            // Lança showSnackbar no escopo da composição para segurança
             scope.launch {
                 snackbarHostState.showSnackbar(
-                    message = message,
-                    duration = SnackbarDuration.Short
+                    message = message, duration = SnackbarDuration.Short
                 )
             }
         }
     }
 
-    // Observador para evento de navegação de Logout
     LaunchedEffect(viewModel.navigateToLogin, navController) {
         viewModel.navigateToLogin.collectLatest {
             navController.navigate(Routes.LOGIN) {
                 popUpTo(navController.graph.startDestinationId) { inclusive = true }
                 launchSingleTop = true
             }
-            // Mostrar Toast após navegação pode ser problemático se a tela destino demorar
-            // Considerar mostrar o Toast ANTES de navegar ou usar um Snackbar na tela de Login
-            // Toast.makeText(context, "Logout efetuado.", Toast.LENGTH_SHORT).show()
         }
     }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings_title)) },
-                navigationIcon = {
-                    IconButton(onClick = { if (!isAnyOperationLoading) navController.popBackStack() }) { // Previne voltar durante loading
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
-                    }
+            TopAppBar(title = { Text(stringResource(R.string.settings_title)) }, navigationIcon = {
+                IconButton(onClick = { if (!isAnyOperationLoading) navController.popBackStack() }) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.back)
+                    )
                 }
-            )
+            })
         },
     ) { paddingValues ->
         Column(
@@ -105,36 +122,41 @@ fun SettingsScreen(
                 .background(MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            // --- AVISO DE SEGURANÇA ---
             Text(
                 text = stringResource(R.string.security_warning),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
+            Text(
+                stringResource(R.string.change_master_login),
+                style = MaterialTheme.typography.titleMedium
+            )
 
-            // --- Seção Alterar Login Mestre ---
-            Text(stringResource(R.string.change_master_login), style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
+
             OutlinedTextField(
                 value = newUsername,
                 onValueChange = viewModel::updateNewUsername,
                 label = { Text(stringResource(R.string.new_username_label)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                enabled = !isAnyOperationLoading // Desabilita se qualquer operação estiver ativa
+                enabled = !isAnyOperationLoading
             )
+
             Spacer(modifier = Modifier.height(8.dp))
+
             Button(
                 onClick = viewModel::saveNewUsername,
-                // Habilitado apenas se campo não vazio E nenhuma operação em andamento
                 enabled = newUsername.isNotBlank() && !isAnyOperationLoading,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Mostra loading APENAS se ESTA operação específica estiver ativa
                 if (isSavingUsername) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.onPrimary)
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 } else {
                     Text(stringResource(R.string.save_new_login_button))
                 }
@@ -142,10 +164,14 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // --- Seção Alterar Senha Mestra ---
-            Text(stringResource(R.string.change_master_password), style = MaterialTheme.typography.titleMedium)
+            Text(
+                stringResource(R.string.change_master_password),
+                style = MaterialTheme.typography.titleMedium
+            )
+
             Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField( // Nova Senha
+
+            OutlinedTextField(
                 value = newPassword,
                 onValueChange = viewModel::updateNewPassword,
                 label = { Text(stringResource(R.string.new_password_label)) },
@@ -157,14 +183,18 @@ fun SettingsScreen(
                     IconButton(onClick = { showNewPassword = !showNewPassword }) {
                         Icon(
                             imageVector = if (showNewPassword) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
-                            contentDescription = if (showNewPassword) stringResource(R.string.hide_password) else stringResource(R.string.show_password)
+                            contentDescription = if (showNewPassword) stringResource(R.string.hide_password) else stringResource(
+                                R.string.show_password
+                            )
                         )
                     }
                 },
-                enabled = !isAnyOperationLoading // Desabilita se qualquer operação estiver ativa
+                enabled = !isAnyOperationLoading
             )
+
             Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField( // Confirmar Nova Senha
+
+            OutlinedTextField(
                 value = confirmPassword,
                 onValueChange = viewModel::updateConfirmPassword,
                 label = { Text(stringResource(R.string.confirm_new_password_label)) },
@@ -176,23 +206,29 @@ fun SettingsScreen(
                     IconButton(onClick = { showConfirmPassword = !showConfirmPassword }) {
                         Icon(
                             imageVector = if (showNewPassword) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
-                            contentDescription = if (showNewPassword) stringResource(R.string.hide_password) else stringResource(R.string.show_password)
+                            contentDescription = if (showNewPassword) stringResource(R.string.hide_password) else stringResource(
+                                R.string.show_password
+                            )
                         )
                     }
                 },
-                enabled = !isAnyOperationLoading, // Desabilita se qualquer operação estiver ativa
+                enabled = !isAnyOperationLoading,
                 isError = newPassword.isNotEmpty() && confirmPassword.isNotEmpty() && newPassword != confirmPassword
             )
+
             Spacer(modifier = Modifier.height(8.dp))
+
             Button(
                 onClick = viewModel::saveNewPassword,
-                // Habilitado apenas se campos válidos E nenhuma operação em andamento
                 enabled = newPassword.isNotBlank() && confirmPassword.isNotBlank() && newPassword == confirmPassword && !isAnyOperationLoading,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Mostra loading APENAS se ESTA operação específica estiver ativa
                 if (isSavingPassword) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.onPrimary)
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 } else {
                     Text(stringResource(R.string.save_new_password_button))
                 }
@@ -200,35 +236,38 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // --- Seção Conta ---
-            Text(stringResource(R.string.account_section_title), style = MaterialTheme.typography.titleMedium)
+            Text(
+                stringResource(R.string.account_section_title),
+                style = MaterialTheme.typography.titleMedium
+            )
+
             Spacer(modifier = Modifier.height(8.dp))
+
             OutlinedButton(
                 onClick = viewModel::logout,
-                // Desabilita se qualquer operação estiver ativa
                 enabled = !isAnyOperationLoading,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
             ) {
-                // Mostra loading APENAS se ESTA operação específica estiver ativa
                 if (isLoggingOut) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.error)
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.error
+                    )
                 } else {
                     Text(stringResource(R.string.logout_button))
                 }
             }
-        } // Fim da Column
-    } // Fim do Scaffold
-} // Fim do Composable
+        }
+    }
+}
 
-// Preview não terá acesso real ao ViewModel/Prefs, apenas layout
 @Preview(showBackground = true)
 @Composable
 fun SettingsScreenPreview() {
     PlainTextKotlinTheme {
-        // Simula um estado de loading para preview, se necessário
-        // SettingsScreen(navController = rememberNavController(), viewModel = fakeViewModel)
         SettingsScreen(navController = rememberNavController())
     }
 }

@@ -68,12 +68,12 @@ import com.example.plaintextkotlin.ui.viewmodel.ViewModelFactory
 import kotlinx.coroutines.delay
 
 @Composable
-fun LoginPage(navController: NavController,
-              viewModel: LoginPageViewModel = viewModel(
-                  factory = ViewModelFactory(
-                      context = LocalContext.current
-                  )
-              )
+fun LoginPage(
+    navController: NavController, viewModel: LoginPageViewModel = viewModel(
+        factory = ViewModelFactory(
+            context = LocalContext.current
+        )
+    )
 ) {
     var rememberMe by remember { mutableStateOf(false) }
     var showPassword by remember { mutableStateOf(false) }
@@ -87,6 +87,7 @@ fun LoginPage(navController: NavController,
 
     var usernameInput by remember { mutableStateOf("") }
     var passwordInput by remember { mutableStateOf("") }
+
     var usernameFocused by remember { mutableStateOf(false) }
     var passwordFocused by remember { mutableStateOf(false) }
 
@@ -156,6 +157,7 @@ fun LoginPage(navController: NavController,
                     }
 
                     Spacer(modifier = Modifier.width(16.dp))
+
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = sloganText.substring(0, animatedSloganTextCount),
@@ -185,12 +187,12 @@ fun LoginPage(navController: NavController,
 
             Spacer(modifier = Modifier.height(32.dp))
 
-
             OutlinedTextField(
                 value = usernameInput,
-                onValueChange = { usernameInput = it
-                                viewModel.clearLoginError()
-                                },
+                onValueChange = {
+                    usernameInput = it
+                    viewModel.clearLoginError()
+                },
                 label = {
                     Text(
                         stringResource(R.string.username_label_required),
@@ -215,18 +217,18 @@ fun LoginPage(navController: NavController,
                     unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
                 isError = loginError != null || (usernameInput.isEmpty() && usernameFocused),
-                supportingText = { if (usernameInput.isEmpty() && usernameFocused) Text(stringResource(R.string.required_field))
-                }
-            )
+                supportingText = {
+                    if (usernameInput.isEmpty() && usernameFocused) Text(stringResource(R.string.required_field))
+                })
 
             Spacer(modifier = Modifier.height(16.dp))
 
-
             OutlinedTextField(
                 value = passwordInput,
-                onValueChange = { passwordInput = it
-                                viewModel.clearLoginError()
-                                },
+                onValueChange = {
+                    passwordInput = it
+                    viewModel.clearLoginError()
+                },
                 label = {
                     Text(
                         stringResource(R.string.password_label_required),
@@ -276,11 +278,12 @@ fun LoginPage(navController: NavController,
                     unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
                 isError = loginError != null || (passwordInput.isEmpty() && passwordFocused),
-                supportingText = { if (passwordInput.isEmpty() && passwordFocused) Text(stringResource(R.string.required_field))
-                }
-            )
+                supportingText = {
+                    if (passwordInput.isEmpty() && passwordFocused) Text(stringResource(R.string.required_field))
+                })
 
             Spacer(modifier = Modifier.height(8.dp))
+
             AnimatedVisibility(visible = loginError != null) {
                 Text(
                     text = loginError ?: "",
@@ -318,12 +321,19 @@ fun LoginPage(navController: NavController,
                         passwordInput = passwordInput,
                         rememberMeChecked = rememberMe,
                         navigateToPasswordPage = { username ->
-                            navController.navigate(Routes.PASSWORD_PAGE.replace("{username}", username)) {
+                            navController.navigate(
+                                Routes.PASSWORD_PAGE.replace(
+                                    "{username}", username
+                                )
+                            ) {
                                 popUpTo(Routes.LOGIN) { inclusive = true }
                             }
-                            Toast.makeText(context, context.getString(R.string.login_success), Toast.LENGTH_SHORT).show()
-                        }
-                    )
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.login_success),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        })
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 modifier = Modifier
@@ -343,7 +353,7 @@ fun LoginPage(navController: NavController,
 @Preview(showBackground = true)
 @Composable
 fun LoginPagePreview() {
-    PlainTextKotlinTheme() {
+    PlainTextKotlinTheme {
         LoginPage(rememberNavController())
     }
 }

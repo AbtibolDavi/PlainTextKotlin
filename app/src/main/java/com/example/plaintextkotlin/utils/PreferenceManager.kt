@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 
 class PreferenceManager(context: Context) {
-
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
 
@@ -61,7 +60,10 @@ class PreferenceManager(context: Context) {
     }
 
     fun getRememberMePassword(): String? {
-        return sharedPreferences.getString(PREF_KEY_REMEMBER_ME_PASSWORD, null) // <-- Lendo senha em texto plano
+        return sharedPreferences.getString(
+            PREF_KEY_REMEMBER_ME_PASSWORD,
+            null
+        )
     }
 
     fun clearRememberMeCredentials() {

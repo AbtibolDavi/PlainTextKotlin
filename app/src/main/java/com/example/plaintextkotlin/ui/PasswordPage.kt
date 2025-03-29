@@ -1,7 +1,6 @@
 package com.example.plaintextkotlin.ui
 
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -76,18 +75,17 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasswordPage(navController: NavController,
-                 username: String? = null,
-                 viewModel: PasswordPageViewModel = viewModel(
-                     factory = ViewModelFactory(
-                         context = LocalContext.current
-                     )
-                 )
+fun PasswordPage(
+    navController: NavController,
+    username: String? = null,
+    viewModel: PasswordPageViewModel = viewModel(
+        factory = ViewModelFactory(
+            context = LocalContext.current
+        )
+    )
 ) {
-    Log.d("PasswordPage", "Composable PasswordPage iniciada")
     var searchText by remember { mutableStateOf("") }
     val passwordsState = viewModel.passwords.collectAsState()
-    Log.d("PasswordPage", "Estado passwordsState coletado, tamanho da lista: ${passwordsState.value.size}")
     var showWelcomeAppBar by remember { mutableStateOf(true) }
     val welcomeMessageUsername = if (username.isNullOrEmpty()) "usuário" else username
 
@@ -96,43 +94,43 @@ fun PasswordPage(navController: NavController,
         showWelcomeAppBar = false
     }
 
-    Scaffold(
-        topBar = {
-            AnimatedContent(
-                targetState = showWelcomeAppBar,
-                transitionSpec = {
-                    if (targetState) {
-                        fadeIn() togetherWith fadeOut()
-                    } else {
-                        fadeIn() togetherWith fadeOut()
-                    }
-                }, label = "topAppBarAnimation"
-            ) { isWelcomeAppBarVisible ->
-                if (isWelcomeAppBarVisible) {
-                    CenterAlignedTopAppBar(
-                        title = { Text(stringResource(R.string.welcome_user, welcomeMessageUsername)) }
-                    )
+    Scaffold(topBar = {
+        AnimatedContent(
+            targetState = showWelcomeAppBar, transitionSpec = {
+                if (targetState) {
+                    fadeIn() togetherWith fadeOut()
                 } else {
-                    CenterAlignedTopAppBar(
-                        title = { Text(stringResource(R.string.password_page_title)) },
-                        actions = {
-                            IconButton(onClick = { navController.navigate(Routes.SETTINGS)}) {
-                                Icon(
-                                    imageVector = Icons.Filled.Settings,
-                                    contentDescription = "Configurações"
-                                )
-                            }
-                        }
-                    )
+                    fadeIn() togetherWith fadeOut()
                 }
+            }, label = "topAppBarAnimation"
+        ) { isWelcomeAppBarVisible ->
+            if (isWelcomeAppBarVisible) {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            stringResource(
+                                R.string.welcome_user, welcomeMessageUsername
+                            )
+                        )
+                    })
+            } else {
+                CenterAlignedTopAppBar(
+                    title = { Text(stringResource(R.string.password_page_title)) },
+                    actions = {
+                        IconButton(onClick = { navController.navigate(Routes.SETTINGS) }) {
+                            Icon(
+                                imageVector = Icons.Filled.Settings,
+                                contentDescription = "Configurações"
+                            )
+                        }
+                    })
             }
-        },
-        floatingActionButton = {
-            AddPasswordButton ( onAddPasswordClick = {
-                navController.navigate(Routes.ADD_PASSWORD)
-            } )
         }
-    ) { innerPadding ->
+    }, floatingActionButton = {
+        AddPasswordButton(onAddPasswordClick = {
+            navController.navigate(Routes.ADD_PASSWORD)
+        })
+    }) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -142,27 +140,20 @@ fun PasswordPage(navController: NavController,
                 .padding(16.dp)
         ) {
             SearchBar(
-                searchText = searchText,
-                onSearchTextChanged = { newSearchText ->
+                searchText = searchText, onSearchTextChanged = { newSearchText ->
                     searchText = newSearchText
-                    viewModel.searchPasswords(newSearchText) }
-            )
+                    viewModel.searchPasswords(newSearchText)
+                })
             Spacer(modifier = Modifier.height(16.dp))
-            Log.d("PasswordPage", "Antes de verificar se a lista está vazia e chamar PasswordList/EmptyStateMessage")
             if (passwordsState.value.isEmpty()) {
                 EmptyStateMessage()
-                Log.d("PasswordPage", "Lista de senhas vazia, EmptyStateMessage exibida")
             } else {
-                Log.d("PasswordPage", "Lista de senhas NÃO vazia, PasswordList será exibida, tamanho da lista: ${passwordsState.value.size}")
                 PasswordList(
-                    passwordList = passwordsState.value,
-                    navController = navController
+                    passwordList = passwordsState.value, navController = navController
                 )
-                Log.d("PasswordPage", "PasswordList exibida")
             }
         }
     }
-    Log.d("PasswordPage", "Fim do Composable PasswordPage")
 }
 
 @Composable
@@ -190,23 +181,17 @@ fun SearchBar(searchText: String, onSearchTextChanged: (String) -> Unit) {
 
 @Composable
 fun PasswordList(
-    passwordList: List<Password>,
-    navController: NavController,
-    modifier: Modifier = Modifier
+    passwordList: List<Password>, navController: NavController, modifier: Modifier = Modifier
 ) {
-    Log.d("PasswordList", "Exibindo lista de senhas com ${passwordList.size} itens")
     val visibleState = remember {
         MutableTransitionState(false).apply {
             targetState = true
         }
     }
     AnimatedVisibility(
-        visibleState = visibleState,
-        enter = fadeIn(
+        visibleState = visibleState, enter = fadeIn(
             animationSpec = spring(dampingRatio = Spring.DampingRatioLowBouncy)
-        ),
-        exit = fadeOut(),
-        modifier = modifier
+        ), exit = fadeOut(), modifier = modifier
     ) {
         LazyColumn(modifier = modifier) {
             itemsIndexed(passwordList) { index, password ->
@@ -221,9 +206,7 @@ fun PasswordList(
                                 animationSpec = spring(
                                     stiffness = Spring.StiffnessVeryLow,
                                     dampingRatio = Spring.DampingRatioLowBouncy
-                                ),
-                                initialOffsetY = { it * (index + 1) }
-                            )
+                                ), initialOffsetY = { it * (index + 1) })
                         )
                 )
             }
@@ -236,11 +219,13 @@ fun PasswordList(
 @Composable
 fun PasswordCard(password: Password, navController: NavController, modifier: Modifier = Modifier) {
     Surface(
-        modifier = modifier
-            .clickable {
-                Log.d("PasswordCard", "Clicou no card: ${(password.id)}, ${password.title}")
-                navController.navigate(Routes.PASSWORD_DETAILS.replace("{passwordId}", password.id.toString()))
-            },
+        modifier = modifier.clickable {
+            navController.navigate(
+                Routes.PASSWORD_DETAILS.replace(
+                    "{passwordId}", password.id.toString()
+                )
+            )
+        },
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surfaceVariant,
         shadowElevation = 4.dp
@@ -332,7 +317,8 @@ fun PasswordPagePreview() {
 @Preview
 @Composable
 fun PasswordCardPreview() {
-    val samplePassword = Password(id = 1, title = "Exemplo", username = "usuário", content = "senha123")
+    val samplePassword =
+        Password(id = 1, title = "Exemplo", username = "usuário", content = "senha123")
     PlainTextKotlinTheme {
         PasswordCard(samplePassword, rememberNavController())
     }

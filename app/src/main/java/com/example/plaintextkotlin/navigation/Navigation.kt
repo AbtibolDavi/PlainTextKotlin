@@ -1,6 +1,5 @@
 package com.example.plaintextkotlin.navigation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -23,29 +22,34 @@ object Routes {
 }
 
 @Composable
-fun Navigation(navController: NavHostController = rememberNavController(), startDestination: String) {
+fun Navigation(
+    navController: NavHostController = rememberNavController(), startDestination: String
+) {
     NavHost(navController = navController, startDestination = startDestination) {
         composable(Routes.LOGIN) {
             LoginPage(navController)
         }
+
         composable(
             route = Routes.PASSWORD_PAGE,
             arguments = listOf(navArgument("username") { type = NavType.StringType })
-        )   { backStackEntry ->
+        ) { backStackEntry ->
             val username = backStackEntry.arguments?.getString("username") ?: "Usuário"
             PasswordPage(navController = navController, username = username)
         }
+
         composable(Routes.ADD_PASSWORD) {
             AddPasswordPage(navController)
         }
+
         composable(
             Routes.PASSWORD_DETAILS,
             arguments = listOf(navArgument("passwordId") { type = NavType.IntType })
-        ) { entry ->
-            val passwordId = entry.arguments?.getInt("passwordId") ?: -1
-            Log.d("Navigation", "PasswordId recebido como argumento: $passwordId")
+        ) { backStackEntry ->
+            val passwordId = backStackEntry.arguments?.getInt("passwordId") ?: -1
             PasswordDetailPage(navController = navController, passwordId = passwordId)
         }
+
         composable(Routes.SETTINGS) {
             SettingsScreen(navController = navController)
         }

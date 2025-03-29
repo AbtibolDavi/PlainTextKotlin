@@ -5,7 +5,6 @@ import com.example.plaintextkotlin.model.Password
 import kotlinx.coroutines.flow.Flow
 
 class DefaultPasswordRepository(private val passwordDao: PasswordDao) : PasswordRepository {
-
     override fun getPasswords(): Flow<List<Password>> {
         return passwordDao.getAllPasswords()
     }
@@ -29,5 +28,4 @@ class DefaultPasswordRepository(private val passwordDao: PasswordDao) : Password
     override suspend fun deletePassword(password: Password) {
         passwordDao.deletePassword(password)
     }
-
 }
