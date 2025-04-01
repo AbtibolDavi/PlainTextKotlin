@@ -2,7 +2,7 @@ package com.example.plaintextkotlin.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.plaintextkotlin.utils.PreferenceManager
+import com.example.plaintextkotlin.utils.UserDataStoreManager
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
-    private val preferenceManager: PreferenceManager
+    private val userDataStoreManager: UserDataStoreManager
 ) : ViewModel() {
     private val _newUsername = MutableStateFlow("")
     val newUsername: StateFlow<String> = _newUsername.asStateFlow()
@@ -61,12 +61,11 @@ class SettingsViewModel(
         viewModelScope.launch {
             _isSavingUsername.value = true
             try {
-                val currentPassword =
-                    preferenceManager.getAppPassword() ?: PreferenceManager.DEFAULT_APP_PASSWORD
-                preferenceManager.saveAppCredentials(usernameToSave, currentPassword)
+                val currentPassword = userDataStoreManager.getAppPasswordOnce()
+                userDataStoreManager.saveAppCredentials(usernameToSave, currentPassword)
 
-                preferenceManager.clearRememberMeCredentials()
-                preferenceManager.saveRememberMeState(false)
+                userDataStoreManager.clearRememberMeCredentials()
+                userDataStoreManager.saveRememberMeState(false)
 
                 _uiMessage.emit("Nome de usuário atualizado com sucesso!")
 
@@ -96,15 +95,12 @@ class SettingsViewModel(
         viewModelScope.launch {
             _isSavingPassword.value = true
             try {
-                val currentUsername =
-                    preferenceManager.getAppUsername() ?: PreferenceManager.DEFAULT_APP_USERNAME
+                val currentUsername = userDataStoreManager.getAppUsernameOnce()
 
-                preferenceManager.saveAppCredentials(
-                    currentUsername, newPass
-                )
+                userDataStoreManager.saveAppCredentials(currentUsername, newPass)
 
-                preferenceManager.clearRememberMeCredentials()
-                preferenceManager.saveRememberMeState(false)
+                userDataStoreManager.clearRememberMeCredentials()
+                userDataStoreManager.saveRememberMeState(false)
 
                 _uiMessage.emit("Senha atualizada com sucesso!")
 
@@ -123,8 +119,8 @@ class SettingsViewModel(
         viewModelScope.launch {
             _isLoggingOut.value = true
             try {
-                preferenceManager.clearRememberMeCredentials()
-                preferenceManager.saveRememberMeState(false)
+                userDataStoreManager.clearRememberMeCredentials()
+                userDataStoreManager.saveRememberMeState(false)
                 _navigateToLogin.emit(Unit)
             } catch (_: Exception) {
                 _uiMessage.emit("Erro ao fazer logout.")

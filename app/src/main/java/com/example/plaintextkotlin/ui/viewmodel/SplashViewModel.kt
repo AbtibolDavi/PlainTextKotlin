@@ -3,14 +3,14 @@ package com.example.plaintextkotlin.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.plaintextkotlin.navigation.Routes
-import com.example.plaintextkotlin.utils.PreferenceManager
+import com.example.plaintextkotlin.utils.UserDataStoreManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SplashViewModel(
-    private val preferenceManager: PreferenceManager
+    private val userDataStoreManager: UserDataStoreManager
 ) : ViewModel() {
     private val _startDestination = MutableStateFlow<String?>(null)
     val startDestination: StateFlow<String?> = _startDestination.asStateFlow()
@@ -23,25 +23,25 @@ class SplashViewModel(
         viewModelScope.launch {
             var destination: String? = null
             try {
-                val rememberMeEnabled = preferenceManager.getRememberMeState()
+                val rememberMeEnabled = userDataStoreManager.getRememberMeStateOnce()
                 if (rememberMeEnabled) {
-                    val rememberedUser = preferenceManager.getRememberMeUsername()
-                    val rememberedPass = preferenceManager.getRememberMePassword()
+                    val rememberedUser = userDataStoreManager.getRememberMeUsernameOnce()
+                    val rememberedPass = userDataStoreManager.getRememberMePasswordOnce()
 
                     if (rememberedUser != null && rememberedPass != null) {
-                        val appUser = preferenceManager.getAppUsername()
-                            ?: PreferenceManager.DEFAULT_APP_USERNAME
-                        val appPass = preferenceManager.getAppPassword()
-                            ?: PreferenceManager.DEFAULT_APP_PASSWORD
+                        val appUser = userDataStoreManager.getAppUsernameOnce()
+                        val appPass = userDataStoreManager.getAppPasswordOnce()
 
                         if (rememberedUser == appUser && rememberedPass == appPass) {
                             destination = Routes.PASSWORD_PAGE.replace("{username}", rememberedUser)
                         } else {
-                            preferenceManager.clearRememberMeCredentials()
-                            preferenceManager.saveRememberMeState(false)
+                            userDataStoreManager.clearRememberMeCredentials()
+                            userDataStoreManager.saveRememberMeState(false)
                             destination = Routes.LOGIN
                         }
                     } else {
+                        userDataStoreManager.clearRememberMeCredentials()
+                        userDataStoreManager.saveRememberMeState(false)
                         destination = Routes.LOGIN
                     }
                 } else {
@@ -49,14 +49,10 @@ class SplashViewModel(
                 }
             } catch (_: Throwable) {
                 destination = Routes.LOGIN
-                preferenceManager.saveRememberMeState(false)
-                preferenceManager.clearRememberMeCredentials()
+                userDataStoreManager.saveRememberMeState(false)
+                userDataStoreManager.clearRememberMeCredentials()
             } finally {
-                if (destination != null) {
-                    _startDestination.value = destination
-                } else {
-                    _startDestination.value = Routes.LOGIN
-                }
+                _startDestination.value = destination ?: Routes.LOGIN
             }
         }
     }

@@ -6,13 +6,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.plaintextkotlin.data.AppDatabase
 import com.example.plaintextkotlin.data.repository.DefaultPasswordRepository
 import com.example.plaintextkotlin.data.repository.PasswordRepository
-import com.example.plaintextkotlin.utils.PreferenceManager
+import com.example.plaintextkotlin.utils.UserDataStoreManager
 
 class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
     private val passwordDao = AppDatabase.getDatabase(context).passwordDao()
     private val passwordRepository: PasswordRepository = DefaultPasswordRepository(passwordDao)
-
-    private val preferenceManager: PreferenceManager = PreferenceManager(context.applicationContext)
+    private val userDataStoreManager: UserDataStoreManager =
+        UserDataStoreManager(context.applicationContext)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -26,7 +26,7 @@ class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
             }
 
             modelClass.isAssignableFrom(LoginPageViewModel::class.java) -> {
-                LoginPageViewModel(preferenceManager) as T
+                LoginPageViewModel(userDataStoreManager) as T
             }
 
             modelClass.isAssignableFrom(PasswordDetailPageViewModel::class.java) -> {
@@ -34,11 +34,11 @@ class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
             }
 
             modelClass.isAssignableFrom(SplashViewModel::class.java) -> {
-                SplashViewModel(preferenceManager) as T
+                SplashViewModel(userDataStoreManager) as T
             }
 
             modelClass.isAssignableFrom(SettingsViewModel::class.java) -> {
-                SettingsViewModel(preferenceManager) as T
+                SettingsViewModel(userDataStoreManager) as T
             }
 
             else -> throw IllegalArgumentException("Classe ViewModel desconhecida. ${modelClass.name}")

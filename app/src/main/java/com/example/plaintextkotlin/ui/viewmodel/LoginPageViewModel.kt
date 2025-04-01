@@ -2,14 +2,14 @@ package com.example.plaintextkotlin.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.plaintextkotlin.utils.PreferenceManager
+import com.example.plaintextkotlin.utils.UserDataStoreManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class LoginPageViewModel(
-    private val preferenceManager: PreferenceManager
+    private val userDataStoreManager: UserDataStoreManager
 ) : ViewModel() {
     private val _loginError = MutableStateFlow<String?>(null)
     val loginError: StateFlow<String?> = _loginError.asStateFlow()
@@ -21,8 +21,14 @@ class LoginPageViewModel(
     val initialUsername: StateFlow<String> = _initialUsername.asStateFlow()
 
     init {
-        _initialRememberMeState.value = preferenceManager.getRememberMeState()
-        _initialUsername.value = preferenceManager.getRememberMeUsername() ?: ""
+        viewModelScope.launch {
+            _initialRememberMeState.value = userDataStoreManager.getRememberMeStateOnce()
+            if (_initialRememberMeState.value) {
+                _initialUsername.value = userDataStoreManager.getRememberMeUsernameOnce() ?: ""
+            } else {
+                _initialUsername.value = ""
+            }
+        }
     }
 
     fun onLoginButtonClicked(
@@ -32,20 +38,18 @@ class LoginPageViewModel(
         navigateToPasswordPage: (String) -> Unit
     ) {
         viewModelScope.launch {
-            val storedUsername =
-                preferenceManager.getAppUsername() ?: PreferenceManager.DEFAULT_APP_USERNAME
-            val storedPassword =
-                preferenceManager.getAppPassword() ?: PreferenceManager.DEFAULT_APP_PASSWORD
+            val storedUsername = userDataStoreManager.getAppUsernameOnce()
+            val storedPassword = userDataStoreManager.getAppPasswordOnce()
 
             if (usernameInput.isBlank() || passwordInput.isBlank()) {
                 _loginError.value = "Usuário e senha são obrigatórios"
             } else if (usernameInput == storedUsername && passwordInput == storedPassword) {
                 _loginError.value = null
-                preferenceManager.saveRememberMeState(rememberMeChecked)
+                userDataStoreManager.saveRememberMeState(rememberMeChecked)
                 if (rememberMeChecked) {
-                    preferenceManager.saveRememberMeCredentials(usernameInput, passwordInput)
+                    userDataStoreManager.saveRememberMeCredentials(usernameInput, passwordInput)
                 } else {
-                    preferenceManager.clearRememberMeCredentials()
+                    userDataStoreManager.clearRememberMeCredentials()
                 }
                 navigateToPasswordPage(usernameInput)
             } else {
