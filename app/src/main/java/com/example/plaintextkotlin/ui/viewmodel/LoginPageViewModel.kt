@@ -2,6 +2,7 @@ package com.example.plaintextkotlin.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.plaintextkotlin.R
 import com.example.plaintextkotlin.utils.UserDataStoreManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,8 +12,8 @@ import kotlinx.coroutines.launch
 class LoginPageViewModel(
     private val userDataStoreManager: UserDataStoreManager
 ) : ViewModel() {
-    private val _loginError = MutableStateFlow<String?>(null)
-    val loginError: StateFlow<String?> = _loginError.asStateFlow()
+    private val _loginError = MutableStateFlow<Int?>(null)
+    val loginError: StateFlow<Int?> = _loginError.asStateFlow()
 
     private val _initialRememberMeState = MutableStateFlow(false)
     val initialRememberMeState: StateFlow<Boolean> = _initialRememberMeState.asStateFlow()
@@ -42,7 +43,7 @@ class LoginPageViewModel(
             val storedPassword = userDataStoreManager.getAppPasswordOnce()
 
             if (usernameInput.isBlank() || passwordInput.isBlank()) {
-                _loginError.value = "Usuário e senha são obrigatórios"
+                _loginError.value = R.string.error_login_required_fields
             } else if (usernameInput == storedUsername && passwordInput == storedPassword) {
                 _loginError.value = null
                 userDataStoreManager.saveRememberMeState(rememberMeChecked)
@@ -53,7 +54,7 @@ class LoginPageViewModel(
                 }
                 navigateToPasswordPage(usernameInput)
             } else {
-                _loginError.value = "Usuário ou senha incorretos"
+                _loginError.value = R.string.error_login_incorrect_credentials
             }
         }
     }

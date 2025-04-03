@@ -87,7 +87,8 @@ fun PasswordPage(
     var searchText by remember { mutableStateOf("") }
     val passwordsState = viewModel.passwords.collectAsState()
     var showWelcomeAppBar by remember { mutableStateOf(true) }
-    val welcomeMessageUsername = if (username.isNullOrEmpty()) "usuário" else username
+    val welcomeMessageUsername = username?.takeIf { it.isNotEmpty() }
+        ?: stringResource(R.string.default_username_display)
 
     LaunchedEffect(Unit) {
         searchText = ""
@@ -107,7 +108,7 @@ fun PasswordPage(
                 } else {
                     fadeIn() togetherWith fadeOut()
                 }
-            }, label = "topAppBarAnimation"
+            }
         ) { isWelcomeAppBarVisible ->
             if (isWelcomeAppBarVisible) {
                 CenterAlignedTopAppBar(
@@ -125,7 +126,7 @@ fun PasswordPage(
                         IconButton(onClick = { navController.navigate(Routes.SETTINGS) }) {
                             Icon(
                                 imageVector = Icons.Filled.Settings,
-                                contentDescription = "Configurações"
+                                contentDescription = stringResource(R.string.settings_title)
                             )
                         }
                     })

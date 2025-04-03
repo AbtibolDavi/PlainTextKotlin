@@ -112,6 +112,7 @@ fun PasswordDetailPage(
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
     var showPasswordText by remember { mutableStateOf(false) }
+    var backButtonClicked by remember { mutableStateOf(false) }
 
     LaunchedEffect(viewModel.uiMessage, navController, context) {
         viewModel.uiMessage.collectLatest { messageResId ->
@@ -159,7 +160,10 @@ fun PasswordDetailPage(
                     if (isEditing) {
                         viewModel.toggleEditMode()
                     } else {
-                        navController.popBackStack()
+                        if (!backButtonClicked) {
+                            backButtonClicked = true
+                            navController.popBackStack()
+                        }
                     }
                 }) {
                     Icon(
@@ -249,7 +253,8 @@ fun PasswordDetailPage(
                                     imageVector = if (showPasswordText) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
                                     contentDescription = if (showPasswordText) stringResource(R.string.hide_password) else stringResource(
                                         R.string.show_password
-                                    )
+                                    ),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         },
@@ -318,7 +323,8 @@ fun PasswordDetailPage(
                                     imageVector = if (showPasswordText) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
                                     contentDescription = if (showPasswordText) stringResource(R.string.hide_password) else stringResource(
                                         R.string.show_password
-                                    )
+                                    ),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                             IconButton(onClick = {

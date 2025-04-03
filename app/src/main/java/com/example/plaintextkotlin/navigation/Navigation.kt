@@ -7,12 +7,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.plaintextkotlin.ui.AboutScreen
+import com.example.plaintextkotlin.ui.AboutPage
 import com.example.plaintextkotlin.ui.AddPasswordPage
 import com.example.plaintextkotlin.ui.LoginPage
 import com.example.plaintextkotlin.ui.PasswordDetailPage
 import com.example.plaintextkotlin.ui.PasswordPage
-import com.example.plaintextkotlin.ui.SettingsScreen
+import com.example.plaintextkotlin.ui.SettingsPage
 
 object Routes {
     const val LOGIN = "login"
@@ -36,7 +36,7 @@ fun Navigation(
             route = Routes.PASSWORD_PAGE,
             arguments = listOf(navArgument("username") { type = NavType.StringType })
         ) { backStackEntry ->
-            val username = backStackEntry.arguments?.getString("username") ?: "Usuário"
+            val username = backStackEntry.arguments?.getString("username")
             PasswordPage(navController = navController, username = username)
         }
 
@@ -53,11 +53,11 @@ fun Navigation(
         }
 
         composable(Routes.SETTINGS) {
-            SettingsScreen(navController = navController)
+            SettingsPage(navController = navController)
         }
 
         composable(Routes.ABOUT) {
-            AboutScreen(navController = navController)
+            AboutPage(navController = navController)
         }
     }
 }

@@ -23,7 +23,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -41,7 +44,7 @@ import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AboutScreen(navController: NavController) {
+fun AboutPage(navController: NavController) {
     val context = LocalContext.current
     val packageName = context.packageName
     val packageInfo = remember {
@@ -54,11 +57,17 @@ fun AboutScreen(navController: NavController) {
 
     val appVersion = packageInfo?.versionName ?: stringResource(R.string.about_version_unknown)
     val appName = stringResource(R.string.app_name)
+    var backButtonClicked by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(stringResource(R.string.about_title)) }, navigationIcon = {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(onClick = {
+                    if (!backButtonClicked) {
+                        backButtonClicked = true
+                        navController.popBackStack()
+                    }
+                }) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.back)
@@ -135,8 +144,8 @@ fun AboutScreen(navController: NavController) {
 
 @Preview(showBackground = true)
 @Composable
-fun AboutScreenPreview() {
+fun AboutPagePreview() {
     PlainTextKotlinTheme {
-        AboutScreen(navController = rememberNavController())
+        AboutPage(navController = rememberNavController())
     }
 }

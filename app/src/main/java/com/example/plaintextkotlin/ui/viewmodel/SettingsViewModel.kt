@@ -2,6 +2,7 @@ package com.example.plaintextkotlin.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.plaintextkotlin.R
 import com.example.plaintextkotlin.utils.UserDataStoreManager
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,8 +24,8 @@ class SettingsViewModel(
     private val _confirmPassword = MutableStateFlow("")
     val confirmPassword: StateFlow<String> = _confirmPassword.asStateFlow()
 
-    private val _uiMessage = MutableSharedFlow<String>()
-    val uiMessage: SharedFlow<String> = _uiMessage.asSharedFlow()
+    private val _uiMessage = MutableSharedFlow<Int>()
+    val uiMessage: SharedFlow<Int> = _uiMessage.asSharedFlow()
 
     private val _isSavingUsername = MutableStateFlow(false)
     val isSavingUsername: StateFlow<Boolean> = _isSavingUsername.asStateFlow()
@@ -54,7 +55,7 @@ class SettingsViewModel(
         val usernameToSave = _newUsername.value.trim()
 
         if (usernameToSave.isBlank()) {
-            viewModelScope.launch { _uiMessage.emit("Nome de usuário não pode ser vazio.") }
+            viewModelScope.launch { _uiMessage.emit(R.string.error_settings_username_empty) }
             return
         }
 
@@ -67,12 +68,12 @@ class SettingsViewModel(
                 userDataStoreManager.clearRememberMeCredentials()
                 userDataStoreManager.saveRememberMeState(false)
 
-                _uiMessage.emit("Nome de usuário atualizado com sucesso!")
+                _uiMessage.emit(R.string.success_settings_username_update)
 
                 _newUsername.value = ""
 
             } catch (_: Exception) {
-                _uiMessage.emit("Erro ao atualizar nome de usuário.")
+                _uiMessage.emit(R.string.error_settings_username_update)
             } finally {
                 _isSavingUsername.value = false
             }
@@ -84,11 +85,11 @@ class SettingsViewModel(
         val confirmPass = _confirmPassword.value
 
         if (newPass.isBlank()) {
-            viewModelScope.launch { _uiMessage.emit("Nova senha não pode ser vazia.") }
+            viewModelScope.launch { _uiMessage.emit(R.string.error_settings_password_empty) }
             return
         }
         if (newPass != confirmPass) {
-            viewModelScope.launch { _uiMessage.emit("As senhas não coincidem.") }
+            viewModelScope.launch { _uiMessage.emit(R.string.error_settings_password_mismatch) }
             return
         }
 
@@ -102,13 +103,13 @@ class SettingsViewModel(
                 userDataStoreManager.clearRememberMeCredentials()
                 userDataStoreManager.saveRememberMeState(false)
 
-                _uiMessage.emit("Senha atualizada com sucesso!")
+                _uiMessage.emit(R.string.success_settings_password_update)
 
                 _newPassword.value = ""
                 _confirmPassword.value = ""
 
             } catch (_: Exception) {
-                _uiMessage.emit("Erro ao atualizar senha.")
+                _uiMessage.emit(R.string.error_settings_password_update)
             } finally {
                 _isSavingPassword.value = false
             }
@@ -123,7 +124,7 @@ class SettingsViewModel(
                 userDataStoreManager.saveRememberMeState(false)
                 _navigateToLogin.emit(Unit)
             } catch (_: Exception) {
-                _uiMessage.emit("Erro ao fazer logout.")
+                _uiMessage.emit(R.string.error_settings_logout)
             } finally {
                 _isLoggingOut.value = false
             }

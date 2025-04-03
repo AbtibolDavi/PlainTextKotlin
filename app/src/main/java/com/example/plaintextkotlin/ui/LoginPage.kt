@@ -18,8 +18,10 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
@@ -91,7 +93,7 @@ fun LoginPage(
     var usernameFocused by remember { mutableStateOf(false) }
     var passwordFocused by remember { mutableStateOf(false) }
 
-    val loginError by viewModel.loginError.collectAsState()
+    val loginErrorId by viewModel.loginError.collectAsState()
 
     val initialRememberMe by viewModel.initialRememberMeState.collectAsState()
     val initialUsername by viewModel.initialUsername.collectAsState()
@@ -128,6 +130,7 @@ fun LoginPage(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
             Box(
@@ -216,7 +219,7 @@ fun LoginPage(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
-                isError = loginError != null || (usernameInput.isEmpty() && usernameFocused),
+                isError = loginErrorId != null || (usernameInput.isEmpty() && usernameFocused),
                 supportingText = {
                     if (usernameInput.isEmpty() && usernameFocused) Text(stringResource(R.string.required_field))
                 })
@@ -253,22 +256,14 @@ fun LoginPage(
                     )
                 },
                 trailingIcon = {
-                    if (showPassword) {
-                        IconButton(onClick = { showPassword = false }) {
-                            Icon(
-                                imageVector = Icons.Filled.Visibility,
-                                contentDescription = stringResource(R.string.hide_password),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    } else {
-                        IconButton(onClick = { showPassword = true }) {
-                            Icon(
-                                imageVector = Icons.Filled.VisibilityOff,
-                                contentDescription = stringResource(R.string.hide_password),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
+                    IconButton(onClick = { showPassword = !showPassword }) {
+                        Icon(
+                            imageVector = if (showPassword) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                            contentDescription = if (showPassword) stringResource(R.string.hide_password) else stringResource(
+                                R.string.show_password
+                            ),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 },
                 colors = OutlinedTextFieldDefaults.colors(
@@ -277,19 +272,21 @@ fun LoginPage(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
-                isError = loginError != null || (passwordInput.isEmpty() && passwordFocused),
+                isError = loginErrorId != null || (passwordInput.isEmpty() && passwordFocused),
                 supportingText = {
                     if (passwordInput.isEmpty() && passwordFocused) Text(stringResource(R.string.required_field))
                 })
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            AnimatedVisibility(visible = loginError != null) {
-                Text(
-                    text = loginError ?: "",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
+            AnimatedVisibility(visible = loginErrorId != null) {
+                loginErrorId?.let {
+                    Text(
+                        text = stringResource(it),
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))

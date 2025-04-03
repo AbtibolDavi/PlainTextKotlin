@@ -72,6 +72,7 @@ fun AddPasswordPage(
     val context = LocalContext.current
 
     var showPasswordText by remember { mutableStateOf(false) }
+    var backButtonClicked by remember { mutableStateOf(false) }
 
     LaunchedEffect(viewModel.uiMessage, navController, context) {
         viewModel.uiMessage.collectLatest { messageResId ->
@@ -88,9 +89,15 @@ fun AddPasswordPage(
             TopAppBar(
                 title = { Text(stringResource(R.string.new_password_title)) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = {
+                        if (!backButtonClicked) {
+                            backButtonClicked = true
+                            navController.popBackStack()
+                        }
+                    }) {
                         Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back)
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 })
@@ -172,7 +179,8 @@ fun AddPasswordPage(
                             imageVector = if (showPasswordText) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
                             contentDescription = if (showPasswordText) stringResource(R.string.hide_password) else stringResource(
                                 R.string.show_password
-                            )
+                            ),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 },

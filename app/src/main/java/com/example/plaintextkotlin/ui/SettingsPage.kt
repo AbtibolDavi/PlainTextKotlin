@@ -62,12 +62,13 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(
+fun SettingsPage(
     navController: NavController,
     viewModel: SettingsViewModel = viewModel(factory = ViewModelFactory(LocalContext.current))
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val newUsername by viewModel.newUsername.collectAsState()
     val newPassword by viewModel.newPassword.collectAsState()
@@ -81,12 +82,13 @@ fun SettingsScreen(
     var showConfirmPassword by remember { mutableStateOf(false) }
 
     val isAnyOperationLoading = isSavingUsername || isSavingPassword || isLoggingOut
+    var backButtonClicked by remember { mutableStateOf(false) }
 
     LaunchedEffect(viewModel.uiMessage, snackbarHostState) {
-        viewModel.uiMessage.collectLatest { message ->
+        viewModel.uiMessage.collectLatest { messageId ->
             scope.launch {
                 snackbarHostState.showSnackbar(
-                    message = message, duration = SnackbarDuration.Short
+                    message = context.getString(messageId), duration = SnackbarDuration.Short
                 )
             }
         }
@@ -105,7 +107,12 @@ fun SettingsScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(title = { Text(stringResource(R.string.settings_title)) }, navigationIcon = {
-                IconButton(onClick = { if (!isAnyOperationLoading) navController.popBackStack() }) {
+                IconButton(onClick = {
+                    if (!isAnyOperationLoading && !backButtonClicked) {
+                        backButtonClicked = true
+                        navController.popBackStack()
+                    }
+                }) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.back)
@@ -183,10 +190,11 @@ fun SettingsScreen(
                 trailingIcon = {
                     IconButton(onClick = { showNewPassword = !showNewPassword }) {
                         Icon(
-                            imageVector = if (showNewPassword) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                            imageVector = if (showNewPassword) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
                             contentDescription = if (showNewPassword) stringResource(R.string.hide_password) else stringResource(
                                 R.string.show_password
-                            )
+                            ),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 },
@@ -206,14 +214,20 @@ fun SettingsScreen(
                 trailingIcon = {
                     IconButton(onClick = { showConfirmPassword = !showConfirmPassword }) {
                         Icon(
-                            imageVector = if (showNewPassword) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
-                            contentDescription = if (showNewPassword) stringResource(R.string.hide_password) else stringResource(
+                            imageVector = if (showConfirmPassword) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                            contentDescription = if (showConfirmPassword) stringResource(R.string.hide_password) else stringResource(
                                 R.string.show_password
-                            )
+                            ),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 },
                 enabled = !isAnyOperationLoading,
+                supportingText = {
+                    if (newPassword.isNotEmpty() && confirmPassword.isNotEmpty() && newPassword != confirmPassword) Text(
+                        stringResource(R.string.error_settings_password_mismatch)
+                    )
+                },
                 isError = newPassword.isNotEmpty() && confirmPassword.isNotEmpty() && newPassword != confirmPassword
             )
 
@@ -277,8 +291,8 @@ fun SettingsScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun SettingsScreenPreview() {
+fun SettingsPagePreview() {
     PlainTextKotlinTheme {
-        SettingsScreen(navController = rememberNavController())
+        SettingsPage(navController = rememberNavController())
     }
 }

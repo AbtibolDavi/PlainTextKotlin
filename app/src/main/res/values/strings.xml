@@ -14,6 +14,7 @@
     <string name="required_field">*obrigatório</string>
     <string name="password_label_required">Senha*</string>
     <string name="username_label_required">Login*</string>
+    <string name="default_username_display">Usuário</string>"
 
     <!-- Login Page -->
     <string name="plain_text_logo">Logotipo do app</string>
@@ -23,6 +24,10 @@
     <string name="remember_me_check">Salvar informação de login</string>
     <string name="login_button_text">ENTRAR</string>
     <string name="login_success">Login efetuado com sucesso!</string>
+
+    <!-- LoginPageViewModel -->
+    <string name="error_login_required_fields">Usuário e senha são obrigatórios</string>
+    <string name="error_login_incorrect_credentials">Usuário ou senha incorretos</string>
 
     <!-- Password List Page -->
     <string name="password_page_title">Senhas Salvas</string>
@@ -71,6 +76,16 @@
     <string name="save_new_password_button">Salvar Nova Senha</string>
     <string name="account_section_title">Conta</string>
     <string name="logout_button">Sair / Logout</string>
+
+    <!-- SettingsViewModel -->
+    <string name="error_settings_username_empty">Nome de usuário não pode ser vazio.</string>
+    <string name="error_settings_username_update">Erro ao atualizar nome de usuário.</string>
+    <string name="success_settings_username_update">Nome de usuário atualizado com sucesso!</string>
+    <string name="error_settings_password_empty">Nova senha não pode ser vazia.</string>
+    <string name="error_settings_password_mismatch">As senhas não coincidem.</string> <!-- Já existe -->
+    <string name="error_settings_password_update">Erro ao atualizar senha.</string>
+    <string name="success_settings_password_update">Senha atualizada com sucesso!</string>
+    <string name="error_settings_logout">Erro ao fazer logout.</string>
 
     <!-- About Page -->
     <string name="about_title">Sobre o App</string>
