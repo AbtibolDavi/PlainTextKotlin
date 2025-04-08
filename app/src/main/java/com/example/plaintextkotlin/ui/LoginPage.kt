@@ -98,7 +98,7 @@ fun LoginPage(
     val initialRememberMe by viewModel.initialRememberMeState.collectAsState()
     val initialUsername by viewModel.initialUsername.collectAsState()
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(true) {
         for (i in sloganText.indices) {
             animatedSloganTextCount = i + 1
             delay(50)

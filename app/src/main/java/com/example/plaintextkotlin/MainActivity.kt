@@ -3,6 +3,7 @@ package com.example.plaintextkotlin
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,20 +18,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.plaintextkotlin.navigation.Navigation
 import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
+import com.example.plaintextkotlin.ui.viewmodel.MainViewModel
 import com.example.plaintextkotlin.ui.viewmodel.SplashViewModel
 import com.example.plaintextkotlin.ui.viewmodel.ViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
-            PlainTextKotlinTheme {
-                val splashViewModel: SplashViewModel = viewModel(
-                    factory = ViewModelFactory(LocalContext.current)
-                )
+            val factory = ViewModelFactory(LocalContext.current)
+            val splashViewModel: SplashViewModel = viewModel(factory = factory)
+            val mainViewModel: MainViewModel = viewModel(factory = factory)
 
-                val startDestination by splashViewModel.startDestination.collectAsState()
+            val dynamicColorsEnabled by mainViewModel.dynamicColorsEnabled.collectAsState()
+            val startDestination by splashViewModel.startDestination.collectAsState()
 
+            PlainTextKotlinTheme(dynamicColor = dynamicColorsEnabled) {
                 if (startDestination == null) {
                     LoadingScreen()
                 } else {

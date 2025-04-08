@@ -10,6 +10,8 @@ object DataStoreKeys {
     val REMEMBER_ME_USERNAME = stringPreferencesKey("remember_me_username")
     val REMEMBER_ME_PASSWORD = stringPreferencesKey("remember_me_password")
 
+    val DYNAMIC_COLORS_ENABLED = booleanPreferencesKey("dynamic_colors_enabled")
+
     const val DEFAULT_APP_USERNAME = "admin"
     const val DEFAULT_APP_PASSWORD = "password"
 }

@@ -12,5 +12,5 @@ data class Password(
 
     val title: String, val username: String, val content: String,
 
-    @DrawableRes val imageResourceId: Int = R.drawable.item_key_novo
+    @DrawableRes val imageResourceId: Int = R.drawable.item_key_foreground
 )

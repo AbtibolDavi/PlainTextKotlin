@@ -14,7 +14,8 @@
     <string name="required_field">*obrigatório</string>
     <string name="password_label_required">Senha*</string>
     <string name="username_label_required">Login*</string>
-    <string name="default_username_display">Usuário</string>"
+    <string name="default_username_display">Usuário</string>
+    <string name="password_icon_desc">Ícone de senha</string>
 
     <!-- Login Page -->
     <string name="plain_text_logo">Logotipo do app</string>
@@ -22,7 +23,7 @@
     <string name="slogan_author">Bob and Alice</string>
     <string name="login_message">Digite suas credenciais para continuar</string>
     <string name="remember_me_check">Salvar informação de login</string>
-    <string name="login_button_text">ENTRAR</string>
+    <string name="login_button_text">Entrar</string>
     <string name="login_success">Login efetuado com sucesso!</string>
 
     <!-- LoginPageViewModel -->
@@ -30,7 +31,7 @@
     <string name="error_login_incorrect_credentials">Usuário ou senha incorretos</string>
 
     <!-- Password List Page -->
-    <string name="password_page_title">Senhas Salvas</string>
+    <string name="password_page_title">Senhas salvas</string>
     <string name="welcome_user">Bem-vindo, %1$s</string>
     <string name="search_passwords">Pesquisar senhas</string>
     <string name="no_password_found">Nenhuma senha encontrada</string>
@@ -67,13 +68,13 @@
     <!-- Settings Page -->
     <string name="settings_title">Configurações</string>
     <string name="security_warning">AVISO: As credenciais mestras são armazenadas localmente em texto plano. Isso é TOTALMENTE SUPER seguro!</string>
-    <string name="change_master_login">Alterar Login Mestre</string>
-    <string name="new_username_label">Novo Nome de Usuário</string>
-    <string name="save_new_login_button">Salvar Novo Login</string>
-    <string name="change_master_password">Alterar Senha Mestra</string>
-    <string name="new_password_label">Nova Senha</string>
-    <string name="confirm_new_password_label">Confirmar Nova Senha</string>
-    <string name="save_new_password_button">Salvar Nova Senha</string>
+    <string name="change_master_login">Alterar login mestre</string>
+    <string name="new_username_label">Novo nome de usuário</string>
+    <string name="save_new_login_button">Salvar novo login</string>
+    <string name="change_master_password">Alterar senha mestra</string>
+    <string name="new_password_label">Nova senha</string>
+    <string name="confirm_new_password_label">Confirmar nova senha</string>
+    <string name="save_new_password_button">Salvar nova senha</string>
     <string name="account_section_title">Conta</string>
     <string name="logout_button">Sair / Logout</string>
 
@@ -86,13 +87,20 @@
     <string name="error_settings_password_update">Erro ao atualizar senha.</string>
     <string name="success_settings_password_update">Senha atualizada com sucesso!</string>
     <string name="error_settings_logout">Erro ao fazer logout.</string>
+    <string name="dynamic_colors_enabled">Cores dinâmicas habilitadas</string>
+    <string name="dynamic_colors_disabled">Cores dinâmicas desabilitadas</string>
+    <string name="setting_dynamic_colors">Cores Dinâmicas (Material You)</string>
+    <string name="appearance_section_title">Aparência</string>
+    <string name="security_section_title">Segurança da conta mestre</string>
 
     <!-- About Page -->
-    <string name="about_title">Sobre o App</string>
+    <string name="about_title">Sobre</string>
     <string name="about_button">Sobre</string>
     <string name="about_version">Versão %1$s</string>
     <string name="about_version_unknown">desconhecida</string>
     <string name="about_description">Um gerenciador de senhas simples e inseguro para fins extremamente sérios.</string>
     <string name="security_warning_crucial">ATENÇÃO: Este aplicativo armazena TODAS as senhas (incluindo a mestra) em TEXTO PLANO no seu dispositivo. É EXTREMAMENTE SEGURO. COM CERTEZA use para senhas reais!</string>
     <string name="about_developer_info">Desenvolvido por Davi Carvalho</string>
+    <string name="no_passwords_query">Nenhum resultado encontrado</string>
+    <string name="try_another_query">Nenhuma senha para %1$s. Tente um termo diferente.</string>
 </resources>

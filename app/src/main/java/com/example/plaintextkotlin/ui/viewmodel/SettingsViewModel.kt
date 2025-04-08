@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
@@ -38,6 +39,20 @@ class SettingsViewModel(
 
     private val _navigateToLogin = MutableSharedFlow<Unit>()
     val navigateToLogin: SharedFlow<Unit> = _navigateToLogin.asSharedFlow()
+
+    val dynamicColorsEnabled: StateFlow<Boolean> = userDataStoreManager.dynamicColorsEnabledFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
+
+    fun setDynamicColorsEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            userDataStoreManager.saveDynamicColorsEnabled(enabled)
+            _uiMessage.emit(if (enabled) R.string.dynamic_colors_enabled else R.string.dynamic_colors_disabled)
+        }
+    }
 
     fun updateNewUsername(input: String) {
         _newUsername.value = input

@@ -1,8 +1,8 @@
 package com.example.plaintextkotlin.ui
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -206,13 +206,21 @@ fun PasswordDetailPage(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    painter = painterResource(pwd.imageResourceId),
-                    contentDescription = null,
+
+                Box(
                     modifier = Modifier
                         .size(80.dp)
                         .clip(CircleShape)
-                )
+                        .background(MaterialTheme.colorScheme.primary),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(pwd.imageResourceId),
+                        contentDescription = stringResource(R.string.password_icon_desc),
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(72.dp)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 

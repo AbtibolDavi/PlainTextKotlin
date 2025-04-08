@@ -67,6 +67,18 @@ class UserDataStoreManager(context: Context) {
             preferences[DataStoreKeys.REMEMBER_ME_PASSWORD]
         }
 
+    val dynamicColorsEnabledFlow: Flow<Boolean> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            preferences[DataStoreKeys.DYNAMIC_COLORS_ENABLED] ?: false
+        }
+
     suspend fun saveAppCredentials(username: String, password: String) {
         dataStore.edit { preferences ->
             preferences[DataStoreKeys.APP_USERNAME] = username
@@ -84,6 +96,12 @@ class UserDataStoreManager(context: Context) {
         dataStore.edit { preferences ->
             preferences[DataStoreKeys.REMEMBER_ME_USERNAME] = username
             preferences[DataStoreKeys.REMEMBER_ME_PASSWORD] = password
+        }
+    }
+
+    suspend fun saveDynamicColorsEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[DataStoreKeys.DYNAMIC_COLORS_ENABLED] = enabled
         }
     }
 

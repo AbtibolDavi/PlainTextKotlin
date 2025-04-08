@@ -41,6 +41,10 @@ class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
                 SettingsViewModel(userDataStoreManager) as T
             }
 
+            modelClass.isAssignableFrom(MainViewModel::class.java) -> {
+                MainViewModel(userDataStoreManager) as T
+            }
+
             else -> throw IllegalArgumentException("Classe ViewModel desconhecida. ${modelClass.name}")
         }
     }

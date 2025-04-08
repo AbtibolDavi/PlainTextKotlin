@@ -116,7 +116,7 @@ class PasswordDetailPageViewModel(
             title = title,
             username = username,
             content = content,
-            imageResourceId = _password.value?.imageResourceId ?: R.drawable.item_key_novo,
+            imageResourceId = _password.value?.imageResourceId ?: R.drawable.item_key_foreground,
         )
 
         viewModelScope.launch {
