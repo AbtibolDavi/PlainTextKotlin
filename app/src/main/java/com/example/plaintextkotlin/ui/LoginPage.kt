@@ -94,9 +94,7 @@ fun LoginPage(
     var passwordFocused by remember { mutableStateOf(false) }
 
     val loginErrorId by viewModel.loginError.collectAsState()
-
     val initialRememberMe by viewModel.initialRememberMeState.collectAsState()
-    val initialUsername by viewModel.initialUsername.collectAsState()
 
     LaunchedEffect(true) {
         for (i in sloganText.indices) {
@@ -111,11 +109,8 @@ fun LoginPage(
         showImage = true
     }
 
-    LaunchedEffect(initialRememberMe, initialUsername) {
+    LaunchedEffect(initialRememberMe) {
         rememberMe = initialRememberMe
-        if (initialUsername.isNotEmpty()) {
-            usernameInput = initialUsername
-        }
     }
 
     val isLoginButtonEnabled = usernameInput.isNotBlank() && passwordInput.isNotBlank()

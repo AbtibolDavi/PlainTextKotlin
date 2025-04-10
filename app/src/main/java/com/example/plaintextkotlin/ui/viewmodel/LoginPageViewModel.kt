@@ -18,17 +18,9 @@ class LoginPageViewModel(
     private val _initialRememberMeState = MutableStateFlow(false)
     val initialRememberMeState: StateFlow<Boolean> = _initialRememberMeState.asStateFlow()
 
-    private val _initialUsername = MutableStateFlow("")
-    val initialUsername: StateFlow<String> = _initialUsername.asStateFlow()
-
     init {
         viewModelScope.launch {
             _initialRememberMeState.value = userDataStoreManager.getRememberMeStateOnce()
-            if (_initialRememberMeState.value) {
-                _initialUsername.value = userDataStoreManager.getRememberMeUsernameOnce() ?: ""
-            } else {
-                _initialUsername.value = ""
-            }
         }
     }
 
