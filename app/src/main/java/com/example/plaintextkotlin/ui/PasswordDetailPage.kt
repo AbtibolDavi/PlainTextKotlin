@@ -323,7 +323,7 @@ fun PasswordDetailPage(
                         ) {
                             Text(
                                 text = "${stringResource(R.string.password_label)} ${
-                                    if (showPasswordText) pwd.content else "*".repeat(pwd.content.length)
+                                    if (showPasswordText) pwd.content else "•".repeat(pwd.content.length)
                                 }", fontSize = 16.sp, modifier = Modifier.weight(1f), maxLines = 1
                             )
                             IconButton(onClick = { showPasswordText = !showPasswordText }) {

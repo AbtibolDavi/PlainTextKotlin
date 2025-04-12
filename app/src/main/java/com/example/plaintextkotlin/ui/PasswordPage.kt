@@ -1,11 +1,11 @@
 package com.example.plaintextkotlin.ui
 
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -56,7 +56,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
@@ -151,9 +150,15 @@ fun PasswordPage(
                 })
             Spacer(modifier = Modifier.height(16.dp))
             if (passwordsState.value.isEmpty() && searchText.isEmpty()) {
-                EmptyStateMessage()
+                InfoMessage(
+                    titleResId = R.string.no_password_found, bodyResId = R.string.add_new_password
+                )
             } else if (passwordsState.value.isEmpty() && searchText.isNotEmpty()) {
-                NoSearchResultsMessage(searchText)
+                InfoMessage(
+                    titleResId = R.string.no_passwords_query,
+                    bodyResId = R.string.try_another_query,
+                    searchText
+                )
             } else {
                 PasswordList(
                     passwordList = passwordsState.value, navController = navController
@@ -287,22 +292,27 @@ fun PasswordCard(password: Password, navController: NavController, modifier: Mod
 }
 
 @Composable
-fun EmptyStateMessage() {
+fun InfoMessage(
+    @StringRes titleResId: Int,
+    @StringRes bodyResId: Int,
+    vararg formatArgs: Any,
+    modifier: Modifier = Modifier
+) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = stringResource(R.string.no_password_found),
+            text = stringResource(titleResId),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = stringResource(R.string.add_new_password),
+            text = stringResource(bodyResId, *formatArgs),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -336,45 +346,44 @@ fun AddPasswordButton(onAddPasswordClick: () -> Unit) {
 fun AnimatedPlainTextTitleAppBar(
     navController: NavController, startAnimation: Boolean
 ) {
-    var iconVisible by remember { mutableStateOf(false) }
     var textVisible by remember { mutableStateOf(false) }
     var animatedTextLength by remember { mutableIntStateOf(0) }
+    var showIcon by remember { mutableStateOf(false) }
     val targetText = "plaintext"
     val boldLength = "plain".length
 
     LaunchedEffect(startAnimation) {
         if (startAnimation) {
-            iconVisible = true
-            delay(150)
+            showIcon = true
+            delay(500)
             textVisible = true
             for (i in 1..targetText.length) {
                 animatedTextLength = i
                 delay(80)
             }
         } else {
-            iconVisible = false
+            showIcon = false
             textVisible = false
             animatedTextLength = 0
         }
     }
-
-    val iconAlpha by animateFloatAsState(
-        targetValue = if (iconVisible) 1f else 0f, animationSpec = tween(durationMillis = 500)
-    )
 
     CenterAlignedTopAppBar(title = {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Image(
-                painter = painterResource(R.drawable.plain_text),
-                contentDescription = stringResource(R.string.app_name),
-                modifier = Modifier
-                    .size(32.dp)
-                    .alpha(iconAlpha),
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
-            )
+            AnimatedVisibility(
+                visible = showIcon, enter = fadeIn(animationSpec = tween(500))
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.plain_text),
+                    contentDescription = stringResource(R.string.app_name),
+                    modifier = Modifier.size(32.dp),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                )
+            }
+
 
             Spacer(modifier = Modifier.width(8.dp))
             Text(
@@ -397,31 +406,6 @@ fun AnimatedPlainTextTitleAppBar(
             )
         }
     })
-}
-
-@Composable
-fun NoSearchResultsMessage(query: String) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = stringResource(R.string.no_passwords_query),
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = stringResource(R.string.try_another_query, query),
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
 }
 
 @Preview
