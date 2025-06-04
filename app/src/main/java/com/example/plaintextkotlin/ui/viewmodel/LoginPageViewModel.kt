@@ -4,12 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.plaintextkotlin.R
 import com.example.plaintextkotlin.utils.UserDataStoreManager
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginPageViewModel(
+@HiltViewModel
+class LoginPageViewModel @Inject constructor(
     private val userDataStoreManager: UserDataStoreManager
 ) : ViewModel() {
     private val _loginError = MutableStateFlow<Int?>(null)

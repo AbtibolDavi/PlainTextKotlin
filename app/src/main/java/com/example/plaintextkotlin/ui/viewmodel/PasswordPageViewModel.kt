@@ -4,14 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.plaintextkotlin.data.repository.PasswordRepository
 import com.example.plaintextkotlin.model.Password
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PasswordPageViewModel(
+@HiltViewModel
+class PasswordPageViewModel @Inject constructor(
     private val passwordRepository: PasswordRepository
 ) : ViewModel() {
     private val _passwords = MutableStateFlow<List<Password>>(emptyList())

@@ -59,23 +59,19 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.plaintextkotlin.R
 import com.example.plaintextkotlin.navigation.Routes
 import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
 import com.example.plaintextkotlin.ui.viewmodel.LoginPageViewModel
-import com.example.plaintextkotlin.ui.viewmodel.ViewModelFactory
 import kotlinx.coroutines.delay
 
 @Composable
 fun LoginPage(
-    navController: NavController, viewModel: LoginPageViewModel = viewModel(
-        factory = ViewModelFactory(
-            context = LocalContext.current
-        )
-    )
+    navController: NavController,
+    viewModel: LoginPageViewModel = hiltViewModel()
 ) {
     var rememberMe by remember { mutableStateOf(false) }
     var showPassword by remember { mutableStateOf(false) }

@@ -42,21 +42,19 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.plaintextkotlin.R
 import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
 import com.example.plaintextkotlin.ui.viewmodel.AddPasswordPageViewModel
-import com.example.plaintextkotlin.ui.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddPasswordPage(
-    navController: NavController, viewModel: AddPasswordPageViewModel = viewModel(
-        factory = ViewModelFactory(context = LocalContext.current)
-    )
+    navController: NavController,
+    viewModel: AddPasswordPageViewModel = hiltViewModel()
 ) {
     var titleFocused by remember { mutableStateOf(false) }
     var usernameFocused by remember { mutableStateOf(false) }

@@ -14,22 +14,21 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.plaintextkotlin.navigation.Navigation
 import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
 import com.example.plaintextkotlin.ui.viewmodel.MainViewModel
 import com.example.plaintextkotlin.ui.viewmodel.SplashViewModel
-import com.example.plaintextkotlin.ui.viewmodel.ViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
-            val factory = ViewModelFactory(LocalContext.current)
-            val splashViewModel: SplashViewModel = viewModel(factory = factory)
-            val mainViewModel: MainViewModel = viewModel(factory = factory)
+            val splashViewModel: SplashViewModel = hiltViewModel()
+            val mainViewModel: MainViewModel = hiltViewModel()
 
             val dynamicColorsEnabled by mainViewModel.dynamicColorsEnabled.collectAsState()
             val startDestination by splashViewModel.startDestination.collectAsState()

@@ -60,7 +60,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.plaintextkotlin.R
@@ -68,7 +68,6 @@ import com.example.plaintextkotlin.data.repository.PasswordRepository
 import com.example.plaintextkotlin.model.Password
 import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
 import com.example.plaintextkotlin.ui.viewmodel.PasswordDetailPageViewModel
-import com.example.plaintextkotlin.ui.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOf
@@ -78,11 +77,7 @@ import kotlinx.coroutines.flow.flowOf
 fun PasswordDetailPage(
     navController: NavController,
     passwordId: Int,
-    viewModel: PasswordDetailPageViewModel = viewModel(
-        factory = ViewModelFactory(
-            context = LocalContext.current
-        )
-    )
+    viewModel: PasswordDetailPageViewModel = hiltViewModel()
 ) {
 
     if (passwordId == -1) {

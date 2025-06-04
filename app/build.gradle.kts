@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -74,6 +75,11 @@ dependencies {
     androidTestImplementation(libs.androidx.navigation.testing)
 
     implementation(libs.androidx.datastore.preferences)
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
+
 
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)

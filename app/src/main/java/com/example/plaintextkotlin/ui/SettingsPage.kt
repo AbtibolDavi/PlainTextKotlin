@@ -54,14 +54,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.plaintextkotlin.R
 import com.example.plaintextkotlin.navigation.Routes
 import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
 import com.example.plaintextkotlin.ui.viewmodel.SettingsViewModel
-import com.example.plaintextkotlin.ui.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -69,7 +68,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SettingsPage(
     navController: NavController,
-    viewModel: SettingsViewModel = viewModel(factory = ViewModelFactory(LocalContext.current))
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()

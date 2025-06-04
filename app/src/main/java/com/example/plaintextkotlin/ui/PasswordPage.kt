@@ -58,7 +58,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -69,7 +68,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.plaintextkotlin.R
@@ -77,7 +76,6 @@ import com.example.plaintextkotlin.model.Password
 import com.example.plaintextkotlin.navigation.Routes
 import com.example.plaintextkotlin.ui.theme.PlainTextKotlinTheme
 import com.example.plaintextkotlin.ui.viewmodel.PasswordPageViewModel
-import com.example.plaintextkotlin.ui.viewmodel.ViewModelFactory
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,11 +83,7 @@ import kotlinx.coroutines.delay
 fun PasswordPage(
     navController: NavController,
     username: String? = null,
-    viewModel: PasswordPageViewModel = viewModel(
-        factory = ViewModelFactory(
-            context = LocalContext.current
-        )
-    )
+    viewModel: PasswordPageViewModel = hiltViewModel()
 ) {
     var searchText by remember { mutableStateOf("") }
     val passwordsState = viewModel.passwords.collectAsState()

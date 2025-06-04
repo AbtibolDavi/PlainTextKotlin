@@ -5,14 +5,17 @@ import androidx.lifecycle.viewModelScope
 import com.example.plaintextkotlin.R
 import com.example.plaintextkotlin.data.repository.PasswordRepository
 import com.example.plaintextkotlin.model.Password
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class AddPasswordPageViewModel(
+@HiltViewModel
+class AddPasswordPageViewModel @Inject constructor(
     private val passwordRepository: PasswordRepository
 ) : ViewModel() {
     private val _uiMessage = MutableSharedFlow<Int>()
