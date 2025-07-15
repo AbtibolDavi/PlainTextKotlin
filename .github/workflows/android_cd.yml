@@ -30,18 +30,10 @@ jobs:
       - name: Decode Keystore
         uses: timheuer/base64-to-file@v1.2
         with:
-          # O segredo a ser decodificado
           encodedString: ${{ secrets.KEYSTORE_BASE64 }}
-          # O diretório onde o arquivo será salvo
           fileDir: 'app/build/'
-          # O nome do arquivo a ser criado
           fileName: 'plaintextkotlin-release-key.jks'
-
-      - name: Verify Keystore Location (Debug Step)
-        run: |
-          echo "Listing files in root directory:"
-          ls -R
-
+          
       - name: Build Signed Release APK
         run: ./gradlew assembleRelease
         env:
