@@ -15,3 +15,5 @@
 local.properties
 plaintextkotlin-release-key.jks
 keystore.properties
+keystore_base64.txt
+test.keystore
