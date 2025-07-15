@@ -34,12 +34,12 @@ android {
                 keystoreProperties.load(FileInputStream(keystorePropertiesFile))
                 keyAlias = keystoreProperties.getProperty("keyAlias")
                 keyPassword = keystoreProperties.getProperty("keyPassword")
-                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                storeFile = rootProject.file(keystoreProperties.getProperty("storeFile"))
                 storePassword = keystoreProperties.getProperty("storePassword")
             } else {
                 keyAlias = System.getenv("SIGNING_KEY_ALIAS")
                 keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
-                storeFile = file("plaintextkotlin-release-key.jks")
+                storeFile = rootProject.file("plaintextkotlin-release-key.jks")
                 storePassword = System.getenv("SIGNING_STORE_PASSWORD")
             }
         }
