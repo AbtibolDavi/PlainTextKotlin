@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+/plaintextkotlin-release-key.jks
+/keystore.properties
