@@ -27,6 +27,11 @@ jobs:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: echo $KEYSTORE_BASE64 | base64 --decode > app/plaintextkotlin-release-key.jks
 
+      - name: Verify Keystore Location (Debug Step)
+        run: |
+          echo "Listing files in root directory:"
+          ls -R
+
       - name: Build Signed Release APK
         run: ./gradlew assembleRelease
         env:
